@@ -1,4 +1,4 @@
-const PostCard = ({ profilePic, username, post, image }) => {
+function PostCard ({ profilePic, username, content, image, visibility }) {
     return (
         <div>
             <div>
@@ -6,9 +6,10 @@ const PostCard = ({ profilePic, username, post, image }) => {
             </div>
             <div>
                 <h4>{username}</h4> 
+                <small>{visibility}</small>
             </div>
             <div>
-                <p>{post}</p>
+                <p>{content}</p>
             </div>
             <div>
                 <img src={image} alt="" />
