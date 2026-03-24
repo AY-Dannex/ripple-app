@@ -1,4 +1,4 @@
-function PostCard ({ profilePic, username, content, image, visibility }) {
+function PostCard ({ profilePic, username, content, image, visibility, dateUpdated, role }) {
     return (
         <div>
             <div>
