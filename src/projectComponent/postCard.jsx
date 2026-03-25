@@ -1,9 +1,8 @@
 import { formatDistanceToNow } from "date-fns"
 import { useState } from "react"
 import { X } from "lucide-react"
-import image from '../assets/pic.jpg'
 
-function PostCard ({ profilePic, username, content, visibility, dateUpdated, role }) {
+function PostCard ({ profilePic, image, username, content, visibility, dateUpdated, role }) {
     const timeAgo = formatDistanceToNow(new Date(dateUpdated), { addSuffix: true })
     const [selectedImage, setSelectedImage] = useState(null)
 
