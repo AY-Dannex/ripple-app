@@ -10,7 +10,7 @@ function PostCard ({ profilePic, image, username, content, visibility, dateUpdat
         <div className="flex flex-col">
             <div className="flex px-5 gap-2 items-center">
                 <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img src={image} alt="" className="w-full h-full object-cover" />
+                    <img src={null} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col w-full">
                     <div className="flex justify-between items-center">
@@ -27,13 +27,13 @@ function PostCard ({ profilePic, image, username, content, visibility, dateUpdat
             </div>
 
             <div className="ml-17 mb-5">
-                <div className="mt-2">
+                <div className="mt-2 pr-5">
                     <p>{content}</p>
                 </div>
 
                 {/* Clickable image */}
                 {image && (
-                    <div className="rounded-xl overflow-hidden">
+                    <div className="rounded-2xl overflow-hidden">
                         <img 
                             src={image} 
                             alt="post" 
