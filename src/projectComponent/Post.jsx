@@ -25,12 +25,14 @@ function Post () {
         }
         getPost()
     }, [])
-    const allPosts = posts?.map((post, index) => (
+    const allPosts = posts?.map((post) => (
         <PostCard  
             key={post._id}
             username={post.user.username}
             content={post.description}
             visibility={post.visibility}
+            dateUpdated={post.updatedAt}
+            role={post.user.role}
         />
     ) )
     return(
