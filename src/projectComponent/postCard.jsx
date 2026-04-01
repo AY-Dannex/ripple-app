@@ -33,7 +33,7 @@ function PostCard ({ profilePic, image, username, content, visibility, dateUpdat
 
                 {/* Clickable image */}
                 {image && (
-                    <div className="rounded-2xl overflow-hidden">
+                    <div className="rounded-3xl overflow-hidden w-full h-100">
                         <img 
                             src={image} 
                             alt="post" 
@@ -66,6 +66,9 @@ function PostCard ({ profilePic, image, username, content, visibility, dateUpdat
                         className="max-w-[90%] max-h-[90vh] object-contain rounded-lg"
                         onClick={(e) => e.stopPropagation()}
                     />
+                    {/* <div className="absolute flex justify-center top-[70%] w-[100%] h-[20%] bg-black/80">
+                        <textarea className="w-[70%] text-white resize-none h-full scrollbar-hide ">{content}</textarea>
+                    </div> */}
                 </div>
             )}
         </div>

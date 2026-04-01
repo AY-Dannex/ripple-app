@@ -9,7 +9,9 @@ function Home (){
                     <Navbar />
                 </div>
                 <div className="border w-full basis-8/10 overflow-y-auto scrollbar-hide">
-                    <WritePost />
+                    <div className="sticky top-0 z-10 bg-[#fff]">
+                         <WritePost />
+                    </div>
                     <Post />
                 </div>
             </div>

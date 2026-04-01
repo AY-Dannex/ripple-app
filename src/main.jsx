@@ -4,12 +4,15 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import { TooltipProvider } from './components/ui/tooltip'
+import { UserProvider } from "./context/UserContext"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <TooltipProvider>
-        <App />
+        <UserProvider>
+          <App />
+        </UserProvider>
       </TooltipProvider>
     </BrowserRouter>
   </StrictMode>,

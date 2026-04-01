@@ -6,11 +6,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react";
+import { useUser } from "../context/UserContext"
 function Login () {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
+    const { setUser } = useUser()
 
     const handleLogin = async () => {
         try {
@@ -28,12 +30,13 @@ function Login () {
             
             if (response.ok){
                 toast.success("Login successful")
+                setUser(data.user)
                 navigate("/home")
             }else{
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error("Something went wrong... Try again later")
+            toast.error("Something went wrong... Please try again later")
         } finally {
             setIsLoading(false)
         }
@@ -41,7 +44,7 @@ function Login () {
 
     return(
         <>
-           <div className="w-full h-screen flex justify-center items-center px-5">
+           <div className="w-full h-screen flex justify-center items-center px-5 bg-[#060612]">
                 <Card className="w-full px-1 sm:w-100">
                     <CardHeader>
                         <CardTitle  className="text-xl">Login to your account</CardTitle>

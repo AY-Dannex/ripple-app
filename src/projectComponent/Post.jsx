@@ -8,6 +8,7 @@ function Post () {
 
     useEffect(() => {
         const getPost = async () => {
+            setLoadingPost(true)
             try {
                 const response = await fetch ("https://ripple-app-backend-jkkz.onrender.com/api/post", {
                     method: "GET",
@@ -19,6 +20,7 @@ function Post () {
                 if (response.ok){
                     setPosts(data.allPost)
                     console.log(data.allPost)
+                    setLoadingPost(false)
                 }
     
             } catch (error) {

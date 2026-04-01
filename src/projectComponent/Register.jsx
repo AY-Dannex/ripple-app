@@ -40,7 +40,7 @@ function Register () {
     }
     return(
         <>
-           <div className="w-full h-screen flex justify-center items-center px-5">
+           <div className="w-full h-screen flex justify-center items-center px-5 bg-[#060612]">
                 <Card className="w-full px-1 sm:w-100">
                     <CardHeader>
                         <CardTitle className="text-xl">Register an account</CardTitle>
