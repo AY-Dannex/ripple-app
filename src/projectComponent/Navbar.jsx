@@ -1,5 +1,6 @@
 // import { Sidebar } from "@/components/ui/sidebar";
 import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,13 +10,36 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreVertical } from "lucide-react"
+import { toast } from "sonner";
+import Login from "./Login";
 
 function Navbar(){
-    const { user } = useUser()
+    const { user, setUser } = useUser()
+    const navigate = useNavigate()
     const navLinks = ["Home", "Explore", "Notifications", "Message", "Profile", "Admin Dashboard"]
     const links = navLinks.map((link, key) => 
     <li className="px-5 py-4"
     key={key}><a href="">{link}</a></li>)
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch("https://ripple-app-backend-jkkz.onrender.com/api/user/logout", {
+                method: "POST",
+                credentials: "include"
+            })
+            const data = await response.json()
+
+            if(response.ok){
+                toast.success(data.message)
+                setUser(null)
+                navigate("/login")
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
     return(
     //    <Sidebar>
         <div>
@@ -25,7 +49,7 @@ function Navbar(){
                 {links}
             </ul>
 
-            <div className="flex gap-1 items-center justify-between">
+            <div className="flex gap-2 items-center">
                 <div className="flex gap-3 items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden">
                         <img className="w-full h-full" src="" alt="profile pic" />
@@ -47,7 +71,7 @@ function Navbar(){
                         <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-500 cursor-pointer">
+                        <DropdownMenuItem onClick={handleLogout} className="text-red-500 cursor-pointer">
                             Logout
                         </DropdownMenuItem>
                     </DropdownMenuContent>

@@ -4,6 +4,7 @@ const UserContext = createContext()
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     const getUserProfile = async () => {
         try {
@@ -19,6 +20,8 @@ export const UserProvider = ({ children }) => {
             }
         } catch (error) {
             console.log(error.message)
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -27,7 +30,7 @@ export const UserProvider = ({ children }) => {
     }, [])
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, loading }}>
             {children}
         </UserContext.Provider>
     );

@@ -6,6 +6,7 @@ function Post () {
     const [posts, setPosts] = useState([])
     const [loadingPost, setLoadingPost] = useState(false)
 
+
     useEffect(() => {
         const getPost = async () => {
             setLoadingPost(true)

@@ -1,10 +1,21 @@
 import { formatDistanceToNow } from "date-fns"
-import { useState } from "react"
-import { X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { X, MoreVertical } from "lucide-react"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import { useUser } from "../context/UserContext.jsx"
 
 function PostCard ({ profilePic, image, username, content, visibility, dateUpdated, role }) {
     const timeAgo = formatDistanceToNow(new Date(dateUpdated), { addSuffix: true })
     const [selectedImage, setSelectedImage] = useState(null)
+    const { user } = useUser()
 
     return (
         <div className="flex flex-col">
@@ -13,14 +24,34 @@ function PostCard ({ profilePic, image, username, content, visibility, dateUpdat
                     <img src={null} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col w-full">
-                    <div className="flex justify-between items-center">
-                        <div className="flex flex-col">
-                            <h4>{username}</h4> 
-                            <small>{role}</small>
+                    <div className="flex justify-between items-center gap-3">
+                        <div className="w-full flex justify-between items-center">
+                            <div className="flex flex-col">
+                                <h4>{username}</h4> 
+                                <small>{role}</small>
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <small>{visibility}</small>
+                                <small>{timeAgo}</small>
+                            </div>
                         </div>
-                        <div className="flex flex-col items-end">
-                            <small>{visibility}</small>
-                            <small>{timeAgo}</small>
+                        <div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className="cursor-pointer outline-none">
+                                    <MoreVertical size={25} />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
+                                    {/* <DropdownMenuSeparator /> */}
+                                    <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
+                                    {(user?.role === "admin" || user?.role === "moderator")  && (
+                                        <div>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="text-red-500 cursor-pointer">Delete</DropdownMenuItem>
+                                        </div>
+                                        )}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
                 </div>

@@ -7,10 +7,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 function Register () {
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [firstNameError, setFirstNameError] = useState("")
+    const [lastNameError, setLastNameError] = useState("")
     const navigate = useNavigate()
 
     const handleRegister = async () => {
@@ -22,7 +26,7 @@ function Register () {
                     "Content-Type": "application/json"
                 },
                 credentials: "include",
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({ firstName, lastName, username, email, password })
             })
             const data = await response.json()
             
@@ -47,6 +51,32 @@ function Register () {
                         <CardDescription>Enter all fields below to register your account</CardDescription>
                     </CardHeader>
                      <CardContent className="flex flex-col gap-3">
+                        <div className="flex gap-3 w-full">
+                            <div className="basis-1/2 flex flex-col gap-3">
+                                <Label>First Name:</Label>
+                                <Input type="text" value={firstName} onChange={(e) => {
+                                    setFirstName(e.target.value)
+                                    if(!/^[a-zA-Z]+$/.test(e.target.value)){
+                                        setFirstNameError("First name can only contain letters")
+                                    }else{
+                                        setFirstNameError("")
+                                    }
+                                    }} placeholder="Enter your First Name"></Input>
+                                    {firstNameError && <small className="text-red-500">{firstNameError}</small>}
+                            </div>
+                            <div className="basis-1/2 flex flex-col gap-3">
+                                <Label>Last Name:</Label>
+                                <Input type="text" value={lastName} onChange={(e) => {
+                                    setLastName(e.target.value)
+                                     if(!/^[a-zA-Z]+$/.test(e.target.value)){
+                                        setLastNameError("First name can only contain letters")
+                                    }else{
+                                        setLastNameError("")
+                                    }
+                                    }} placeholder="Enter your Last Name"></Input>
+                                    {lastNameError && <small className="text-red-500">{lastNameError}</small>}
+                            </div>
+                        </div>
                         <Label>Username:</Label>
                         <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter your username"></Input>
                         <Label>Email:</Label>
