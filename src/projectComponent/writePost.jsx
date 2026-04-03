@@ -40,7 +40,7 @@ function WritePost () {
         <div className="px-5 py-5">
             <div className="flex gap-3 py-2">
                 <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img src="" alt="profilepic" className="" />
+                    <img src={null} alt="profilepic" className="" />
                 </div>
                     <Input type="text" onChange={(e) => (setDescription(e.target.value))} placeholder="What's on your mind?" className="border-none" />
             </div>

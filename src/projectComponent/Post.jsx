@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import PostCard from "./postCard.jsx"
 import PostSkeleton from "./PostSkeleton.jsx"
+import WritePost from "./WritePost.jsx"
 
 function Post () {
     const [posts, setPosts] = useState([])
@@ -20,7 +21,6 @@ function Post () {
     
                 if (response.ok){
                     setPosts(data.allPost)
-                    console.log(data.allPost)
                     setLoadingPost(false)
                 }
     
@@ -43,6 +43,9 @@ function Post () {
     ) )
     return(
         <div>
+            <div className="sticky top-0 z-10 bg-[#fff]">
+                <WritePost />
+            </div>
             {
                 loadingPost ? 
                 (

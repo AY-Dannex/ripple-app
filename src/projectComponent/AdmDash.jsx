@@ -1,8 +1,8 @@
-function Logout (){
+function Admin (){
     return(
         <div>
             
         </div>
     )
 }
-export default Logout
+export default Admin

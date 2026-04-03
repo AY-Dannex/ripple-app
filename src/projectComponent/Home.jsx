@@ -1,6 +1,8 @@
 import Navbar from "./Navbar.jsx";
 import Post from "./Post.jsx";
 import WritePost from "./WritePost.jsx";
+import Profile from "./Profile.jsx";
+import { Routes, Route, Navigate } from "react-router-dom"
 function Home (){
     return(
         <div className="w-full h-screen px-5">
@@ -9,10 +11,7 @@ function Home (){
                     <Navbar />
                 </div>
                 <div className="border w-full basis-8/10 overflow-y-auto scrollbar-hide">
-                    <div className="sticky top-0 z-10 bg-[#fff]">
-                         <WritePost />
-                    </div>
-                    <Post />
+                    <Profile />
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 // import { Sidebar } from "@/components/ui/sidebar";
 import { useUser } from "../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,15 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MoreVertical } from "lucide-react"
 import { toast } from "sonner";
-import Login from "./Login";
 
 function Navbar(){
     const { user, setUser } = useUser()
     const navigate = useNavigate()
-    const navLinks = ["Home", "Explore", "Notifications", "Message", "Profile", "Admin Dashboard"]
-    const links = navLinks.map((link, key) => 
-    <li className="px-5 py-4"
-    key={key}><a href="">{link}</a></li>)
 
     const handleLogout = async () => {
         try {
@@ -32,6 +27,7 @@ function Navbar(){
             if(response.ok){
                 toast.success(data.message)
                 setUser(null)
+                document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
                 navigate("/login")
             }else{
                 toast.error(data.message)
@@ -46,16 +42,21 @@ function Navbar(){
             <h1>LOGO</h1>
             
             <ul>
-                {links}
+                <li className="px-5 py-4">Home</li>
+                <li className="px-5 py-4">Explore</li>
+                <li className="px-5 py-4">Notification</li>
+                <li className="px-5 py-4">Message</li>
+                <li className="px-5 py-4">Profile</li>
+                {user?.role === "admin" && (<li className="px-5 py-4">Admin Dashboard</li>)}
             </ul>
 
             <div className="flex gap-2 items-center">
                 <div className="flex gap-3 items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden">
-                        <img className="w-full h-full" src="" alt="profile pic" />
+                        <img className="w-full h-full" src={null} alt="profile pic" />
                     </div>
                     <div className="flex flex-col">
-                        <h3 className="font-medium">{user?.username}</h3>
+                        <h3 className="font-medium">{user?.firstName} {user?.lastName}</h3>
                         <small>@{user?.username}</small>
                     </div>
                 </div>

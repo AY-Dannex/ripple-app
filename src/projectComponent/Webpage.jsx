@@ -1,7 +1,3 @@
-import Header from "./Header.jsx";
-import Navbar from "./navbar.jsx";
-// import writePost from "./writePost.jsx";
-import Post from "./Post.jsx";
 import Login from "./Login.jsx";
 import Register from "./Register.jsx";
 import Landing from "./Landing.jsx";
