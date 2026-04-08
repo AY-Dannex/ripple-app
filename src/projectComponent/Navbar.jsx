@@ -56,7 +56,7 @@ function Navbar(){
                         <img className="w-full h-full" src={null} alt="profile pic" />
                     </div>
                     <div className="flex flex-col">
-                        <h3 className="font-medium">{user?.firstName} {user?.lastName}</h3>
+                        <h4 className="font-medium text-[14px]">{user?.firstName} {user?.lastName}</h4>
                         <small>@{user?.username}</small>
                     </div>
                 </div>
