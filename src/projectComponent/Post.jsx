@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import PostCard from "./postCard.jsx"
 import PostSkeleton from "./PostSkeleton.jsx"
 import WritePost from "./WritePost.jsx"
+import UploadPost from "./UploadPost.jsx"
+import pic from "../assets/pic.jpg"
 
 function Post () {
     const [posts, setPosts] = useState([])
@@ -12,7 +14,7 @@ function Post () {
         const getPost = async () => {
             setLoadingPost(true)
             try {
-                const response = await fetch ("https://ripple-app-backend-jkkz.onrender.com/api/post", {
+                const response = await fetch ("http://localhost:5000/api/post", {
                     method: "GET",
                     credentials: "include"
                 })
@@ -33,16 +35,18 @@ function Post () {
     const allPosts = posts?.slice().reverse().map((post) => (
         <PostCard  
             key={post._id}
+            profilePic={post.user.profilePic}
+            firstName={post.user.firstName}
+            lastName={post.user.lastName}
             username={post.user.username}
             content={post.description}
             image={post.image}
             visibility={post.visibility}
             dateUpdated={post.updatedAt}
-            role={post.user.role}
         />
     ) )
     return(
-        <div>
+        <div className="relative">
             <div className="sticky top-0 z-10 bg-[#fff]">
                 <WritePost />
             </div>
@@ -56,6 +60,7 @@ function Post () {
                     </div>
                 )
             }
+            <UploadPost />
         </div>
     );
 }

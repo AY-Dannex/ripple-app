@@ -4,20 +4,23 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react";
+import PostCard from "./postCard"
 import pic from "../assets/pic.jpg"
 
 function Profile (){
     const { user, setUser } = useUser()
+    const [userPosts, setUserPosts] = useState([])
     const [readOnly, setReadOnly] = useState(true)
     const [loading, setLoading] = useState(false)
-    const [profilePic, setProfilePic] = useState(true)
+    const [picLoading, setPicLoading] = useState(false)
+    const [profilePic, setProfilePic] = useState(null)
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
         username: "",
         email: "",
         created: "",
-        bio: "",
+        bio: ""
     })
 
     const handleEdit = () => {
@@ -27,7 +30,7 @@ function Profile (){
     const handleSave = async () => {
         try {
             setLoading(true)
-            const response = await fetch("https://ripple-app-backend-jkkz.onrender.com/api/user/update-profile", {
+            const response = await fetch("http://localhost:5000/api/user/update-profile", {
                 method: "PATCH",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -55,33 +58,80 @@ function Profile (){
         }
     }
 
-    const handleUploadProfilePic = async () =>{
+    // const getProfilePic = (e) => {
+    //     setProfilePic(e.target.files[0])
+    //     console.log(profilePic)
+    // }
+
+    const handleUploadProfilePic = async (e) =>{
         try {
-            const response = await fetch ("https://ripple-app-backend-jkkz.onrender.com/api/user/upload-profile-pic", {
+            // getProfilePic(e)
+            setPicLoading(true)
+            const file = e.target.files[0]
+
+            if(!file) return
+
+            setProfilePic(URL.createObjectURL(file))
+
+            const formData = new FormData()
+            formData.append("profilePic", file)
+
+            const response = await fetch ("http://localhost:5000/api/user/upload-profile-pic", {
                 method: "PATCH",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    imageUrl: profilePic
-                })
+                body: formData
             })
 
             const data = await response.json()
 
             if(response.ok){
+                // console.log("data:", data)
+                // console.log("data.profile:", data.profile) 
                 toast.success(data.message)
+                setUser(data.profile)
+                setPicLoading(false)
             }else{
                 toast.error(data.message)
+                setPicLoading(false)
             }
         } catch (error) {
             toast.error(error.message)
+            setPicLoading(false)
         }
     }
 
-        //    console.log("Loading: ", loading)
+    const getUserPost = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/api/post/user", {
+                method: "GET",
+                credentials: "include"
+            })
+
+            const data = await response.json()
+
+            if(response.ok){
+                setUserPosts(data.userPost)
+                console.log(data.userPost)
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+    const allUserPosts = userPosts?.slice().reverse().map((post) => (
+        <PostCard 
+            key={post._id}
+            profilePic={user?.profilePic || pic}
+            username={post.user.username}
+            content={post.description}
+            image={post.image}
+            visibility={post.visibility}
+            dateUpdated={post.updatedAt}
+            role={post.user.role}
+        />
+))
 
     useEffect(() => {
-        // getProfile()
         setFormData({
             id: user?.id || "",
             firstName: user?.firstName || "",
@@ -92,23 +142,37 @@ function Profile (){
             role: user?.role || "",
             created: user?.created || "",
         })
-         console.log(formData)
-    }, [user])
+
+        setProfilePic(user?.profilePic || pic)
+
+        getUserPost()
+    }, [])
 
     return(
         <div className="w-full px-3 py-2">
             <h1 className="text-[20px] font-medium mb-3">My Profile</h1>
-            <div className="w-full flex gap-5 items-center  py-5 px-2 rounded-xl">
-                <div className="w-30 h-30 rounded-[300px] relative border cursor-pointer overflow-hidden">
-                    {profilePic && <img src={pic} alt="profile-pic" className="z-5 w-full h-full object-cover" />}
-                    <Input type="file"  accept="image/*" onChange={(e) => setProfilePic(e.target.files[0])} className="absolute z-10 inset-0 h-[100%] opacity-0"/>
+            <div className="w-full flex gap-5 items-center  py-5 px-5 rounded-xl border shadow-md">
+                <div className="pic w-30 h-30 rounded-[300px] relative border cursor-pointer overflow-hidden">
+                    {
+                        picLoading? (
+                            <div className="absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full h-full bg-black/50 h-[10%] z-10 cursor-pointer">
+                                <small className="absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full text-center text-[14px] font-medium cursor-pointer text-white ">{picLoading? <Loader2 className="animate-spin ml-[40%]"/> : ""}</small>
+                            </div>
+                        ) : (
+                            <div className="hovereff absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full h-full bg-black/50 h-[10%] z-10 cursor-pointer ">
+                                <small className="absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full text-center text-[14px] font-medium cursor-pointer text-white ">Add photo</small>
+                            </div>
+                        )
+                    }
+                    {profilePic && <img src={profilePic} alt="profile-pic" className="z-5 w-full h-full object-cover cursor-pointer " />}
+                    <input type="file" disabled={picLoading} accept="image/*" onChange={(e) => handleUploadProfilePic(e)}  className="absolute z-15 inset-0 h-[100%] opacity-0 cursor-pointer"/>
                 </div>
                 <div>
-                    <h2 className="font-medium text-[18px]">{user?.firstName} {user?.lastName}</h2>
-                    <small className="font-medium">{user?.role}</small>
+                    <h2 className="font-medium text-[18px]">{user?.lastName} {user?.firstName}</h2>
+                    <small className="font-medium text-[#555]">{user?.role}</small>
                 </div>
             </div>
-            <div className="w-full py-3 px-2 mt-3 rounded-xl">
+            <div className="w-full py-4 px-5 mt-3 rounded-xl border shadow-md">
                 <div className="w-full flex justify-between">
                     <h1 className="text-[20px] font-medium">Persornal Information</h1>
                     <Button onClick={readOnly? handleEdit : handleSave} className="cursor-pointer py-3 px-5">{loading? <Loader2 className="animate-spin"/> : readOnly? "Edit" : "Save"}</Button>
@@ -144,7 +208,13 @@ function Profile (){
                 </div>
                 <div className="w-full mt-10 flex flex-col gap-3">
                     <small className="px-3">Bio</small>
-                    <textarea readOnly={readOnly} placeholder="Add your bio" value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} className="w-full h-40 border rounded-xl p-2 text-[14px] resize-none"></textarea>
+                    <textarea readOnly={readOnly} placeholder="Add a bio" value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} className="w-full h-40 border rounded-xl p-2 text-[14px] resize-none"></textarea>
+                </div>
+            </div>
+            <div className="mt-15">
+                <h1 className="text-[20px] font-medium text-center">My Posts</h1>
+                <div className="flex flex-col gap-2">
+                    { allUserPosts }
                 </div>
             </div>
         </div>

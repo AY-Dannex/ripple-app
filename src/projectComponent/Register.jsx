@@ -20,7 +20,7 @@ function Register () {
     const handleRegister = async () => {
         try {
             setIsLoading(true)
-            const response = await fetch ("https://ripple-app-backend-jkkz.onrender.com/api/user/register", {
+            const response = await fetch ("http://localhost:5000/api/user/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

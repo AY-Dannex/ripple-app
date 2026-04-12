@@ -1,20 +1,20 @@
-import Navbar from "./Navbar.jsx";
-import Post from "./Post.jsx";
-import WritePost from "./WritePost.jsx";
-import Profile from "./Profile.jsx";
-import { Routes, Route, Navigate } from "react-router-dom"
-function Home (){
-    return(
-        <div className="w-full h-screen px-5">
+import Navbar from "./Navbar.jsx"
+import { Outlet } from "react-router-dom"
+
+function Home() {
+    return (
+        <div className="w-full h-screen">
             <div className="max-w-[1440px] h-screen m-auto flex">
-                <div className="border w-full basis-2/10">
+                {/* Left - Navbar stays fixed */}
+                <div className="border w-full basis-2/10 h-full">
                     <Navbar />
                 </div>
+                {/* Right - Content changes based on route */}
                 <div className="border w-full basis-8/10 overflow-y-auto scrollbar-hide">
-                    <Profile />
+                    <Outlet />  {/* 👈 this is where page content renders */}
                 </div>
             </div>
         </div>
-    );
+    )
 }
 export default Home

@@ -127,3 +127,12 @@
     @apply font-sans;
     }
 }
+
+.hovereff{
+  opacity: 0;
+  transition: 300ms all ;
+}
+
+.pic:hover .hovereff{
+  opacity: 1;
+}

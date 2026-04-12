@@ -12,7 +12,7 @@ import {
 
 import { useUser } from "../context/UserContext.jsx"
 
-function PostCard ({ profilePic, image, username, content, visibility, dateUpdated, role }) {
+function PostCard ({ profilePic, image, firstName, lastName, username, content, visibility, dateUpdated}) {
     const timeAgo = formatDistanceToNow(new Date(dateUpdated), { addSuffix: true })
     const [selectedImage, setSelectedImage] = useState(null)
     const { user } = useUser()
@@ -21,14 +21,14 @@ function PostCard ({ profilePic, image, username, content, visibility, dateUpdat
         <div className="flex flex-col">
             <div className="flex px-5 gap-2 items-center">
                 <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img src={null} alt="" className="w-full h-full object-cover" />
+                    <img src={profilePic} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col w-full">
                     <div className="flex justify-between items-center gap-3">
                         <div className="w-full flex justify-between items-center">
                             <div className="flex flex-col">
-                                <h4>{username}</h4> 
-                                <small>{role}</small>
+                                <h4 className="font-medium">{lastName} {firstName}</h4> 
+                                <small>@{username}</small>
                             </div>
                             <div className="flex flex-col items-end">
                                 <small>{visibility}</small>
@@ -58,7 +58,7 @@ function PostCard ({ profilePic, image, username, content, visibility, dateUpdat
             </div>
 
             <div className="ml-17 mb-5">
-                <div className="mt-2 pr-5">
+                <div className="mt-2 mb-2 pr-5">
                     <p>{content}</p>
                 </div>
 

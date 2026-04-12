@@ -3,10 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner";
+import { useUser } from "../context/UserContext";
+import pic from "../assets/pic.jpg"
+
 function WritePost () {
     const [description, setDescription] = useState("")
     const [visibility, setVisibility] = useState("")
     const [imageFile, setImageFile] = useState(null)
+    const {user, setUser} = useUser()
 
     
     const handlePost = async () => {
@@ -15,7 +19,7 @@ function WritePost () {
            formData.append("description", description)
            formData.append("visibility", visibility)
            if(imageFile) formData.append("image", imageFile)
-         const response = await fetch ("https://ripple-app-backend-jkkz.onrender.com/api/post/create", {
+         const response = await fetch ("http://localhost:5000/api/post/create", {
             method: "POST",
             credentials: "include",
             body: formData
@@ -40,7 +44,7 @@ function WritePost () {
         <div className="px-5 py-5">
             <div className="flex gap-3 py-2">
                 <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <img src={null} alt="profilepic" className="" />
+                    <img src={user.profilePic || pic} alt="profilepic" className="w-full h-full object-cover" />
                 </div>
                     <Input type="text" onChange={(e) => (setDescription(e.target.value))} placeholder="What's on your mind?" className="border-none" />
             </div>

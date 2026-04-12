@@ -8,19 +8,23 @@ export const UserProvider = ({ children }) => {
 
     const getUserProfile = async () => {
         try {
-            const response = await fetch("https://ripple-app-backend-jkkz.onrender.com/api/user/profile", {
+            const response = await fetch("http://localhost:5000/api/user/profile", {
                 method: "GET",
                 credentials: "include",
-                header: {
+                headers: {
                     "Cache-Control": "no-cache"
                 }
             })
             // console.log("Status: ", response.status)
+            // console.log("fetchUser status:", response.status)
             const data = await response.json()
+            // console.log("fetchUser data:", data)
             // console.log("Data: ", data.profile)
 
             if(response.ok){
+                // setUser(data.profile)
                 setUser(data.profile)
+                // console.log(user)
             }else{
                 setUser(null)
             }
@@ -34,7 +38,8 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         getUserProfile()
-    }, [])
+        // console.log(user)
+    }, [user])
 
     return (
         <UserContext.Provider value={{ user, setUser, loading }}>
