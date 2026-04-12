@@ -4,16 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner";
 import { useUser } from "../context/UserContext";
+import { ImagePlus } from "lucide-react";
 import pic from "../assets/pic.jpg"
 
 function WritePost () {
     const [description, setDescription] = useState("")
     const [visibility, setVisibility] = useState("")
     const [imageFile, setImageFile] = useState(null)
+    const [loading, setLoading] = useState(false)
     const {user, setUser} = useUser()
 
     
     const handlePost = async () => {
+        setLoading(true)
         try {
            const formData = new FormData()
            formData.append("description", description)
@@ -30,14 +33,16 @@ function WritePost () {
 
         if(response.ok){
             toast.success(data.message)
+            setLoading(false)
             window.location.reload()
         }else{
+            setLoading(false)
             toast.error(data.message)
         }
-       } catch (error) {
+    } catch (error) {
+           setLoading(false)
             toast.error(error.message)
        }
-    console.log(visibility)
     }
 
     return(
@@ -50,7 +55,10 @@ function WritePost () {
             </div>
             <hr />
             <div className="py-3 flex gap-5">
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} className="w-30"/>
+                <input type="file" accept="image/*" disabled={loading} onChange={(e) => setImageFile(e.target.files[0])} className="w-full h-full text-30 border absolute top-3 inset-0 top z-5 hidden " name="" id="upload" />
+                <label htmlFor="upload">
+                    <ImagePlus className="w-[30px] h-[30px] z-10 cursor-pointer" />
+                </label>
                 <Select value={visibility} onValueChange={setVisibility}>
                     <SelectTrigger className="w-full max-w-35">
                         <SelectValue placeholder="Select visibility" />
@@ -62,8 +70,8 @@ function WritePost () {
                         <SelectItem value="private">Private</SelectItem>
                         </SelectGroup>
                     </SelectContent>
-                    </Select>
-                <Button onClick={handlePost} className="cursor-pointer px-5">Post</Button>
+                </Select>
+                <Button onClick={handlePost} className="cursor-pointer px-5 bg-purple-500">Post</Button>
             </div>
             <hr />
         </div>

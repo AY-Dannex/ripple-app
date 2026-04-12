@@ -35,7 +35,7 @@ function Post () {
     const allPosts = posts?.slice().reverse().map((post) => (
         <PostCard  
             key={post._id}
-            profilePic={post.user.profilePic}
+            profilePic={post.user.profilePic || pic}
             firstName={post.user.firstName}
             lastName={post.user.lastName}
             username={post.user.username}
@@ -57,10 +57,10 @@ function Post () {
                 ) : (
                     <div className="flex flex-col gap-2">
                         {allPosts}
+                         <UploadPost />
                     </div>
                 )
             }
-            <UploadPost />
         </div>
     );
 }

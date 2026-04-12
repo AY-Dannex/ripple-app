@@ -107,7 +107,7 @@ function Navbar(){
                     </div>
                     <div className="flex flex-col">
                         <h4 className="font-semibold text-[13px] leading-tight">
-                            {user?.firstName} {user?.lastName}
+                            {user?.lastName} {user?.firstName} 
                         </h4>
                         <small className="text-gray-400 text-[11px]">@{user?.username}</small>
                     </div>
