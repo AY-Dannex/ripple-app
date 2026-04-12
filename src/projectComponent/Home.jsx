@@ -6,12 +6,11 @@ function Home() {
         <div className="w-full h-screen">
             <div className="max-w-[1440px] h-screen m-auto flex">
                 {/* Left - Navbar stays fixed */}
-                <div className="border w-full basis-2/10 h-full">
+                <div className="border h-full w-[60px] lg:w-[220px] transition-all duration-300 flex-shrink-0">
                     <Navbar />
                 </div>
-                {/* Right - Content changes based on route */}
-                <div className="border w-full basis-8/10 overflow-y-auto scrollbar-hide">
-                    <Outlet />  {/* 👈 this is where page content renders */}
+                <div className="border flex-1 overflow-y-auto scrollbar-hide">
+                    <Outlet />
                 </div>
             </div>
         </div>

@@ -64,11 +64,11 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
 
                 {/* Clickable image */}
                 {image && (
-                    <div className="rounded-3xl overflow-hidden w-full h-100">
+                    <div className="rounded-3xl border border-purple-200 overflow-hidden w-full sm:h-50 md:h-70 lg:h-100">
                         <img 
                             src={image} 
                             alt="post" 
-                            className="object-cover w-full cursor-pointer hover:opacity-90 transition-opacity"
+                            className="object-cover w-full cursor-pointer scale-150 hover:opacity-90 transition-opacity"
                             onClick={() => setSelectedImage(image)}
                         />
                     </div>

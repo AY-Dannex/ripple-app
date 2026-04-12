@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSepa
 import { toast } from "sonner";
 import { useUser } from "../context/UserContext";
 import { ImagePlus } from "lucide-react";
+import { usePosts } from "../context/PostContext";
 import pic from "../assets/pic.jpg"
 
 function WritePost () {
@@ -13,6 +14,7 @@ function WritePost () {
     const [imageFile, setImageFile] = useState(null)
     const [loading, setLoading] = useState(false)
     const {user, setUser} = useUser()
+    const { fetchPosts } = usePosts()
 
     
     const handlePost = async () => {
@@ -34,7 +36,8 @@ function WritePost () {
         if(response.ok){
             toast.success(data.message)
             setLoading(false)
-            window.location.reload()
+            // window.location.reload()
+            fetchPosts()
         }else{
             setLoading(false)
             toast.error(data.message)

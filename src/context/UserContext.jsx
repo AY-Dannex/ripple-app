@@ -39,7 +39,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         getUserProfile()
         // console.log(user)
-    }, [user])
+    }, [])
 
     return (
         <UserContext.Provider value={{ user, setUser, loading }}>

@@ -63,13 +63,13 @@ function Navbar(){
     }
 
     return(
-        <div className="h-full flex flex-col justify-between py-6 px-3">
+        <div className="h-full flex flex-col justify-between py-6 px-2">
             
             {/* Logo */}
             <div>
                 <div className="flex items-center gap-2 px-3 mb-8">
                     <Waves size={24} className="text-purple-500" />
-                    <span className="font-bold text-xl tracking-tight">Ripple</span>
+                    <span className="font-bold text-xl tracking-tight hidden lg:block">Ripple</span>
                 </div>
 
                 {/* Nav Links */}
@@ -87,7 +87,7 @@ function Navbar(){
                                         }`}
                                 >
                                     <Icon size={20} />
-                                    {label}
+                                    <span className="hidden lg:block">{label}</span>
                                 </Link>
                             </li>
                         )
@@ -98,14 +98,14 @@ function Navbar(){
             {/* User section at bottom */}
             <div className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-gray-100 transition-all duration-200">
                 <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-purple-200">
+                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-purple-200 flex-shrink-0">
                         <img 
                             className="w-full h-full object-cover" 
                             src={user?.profilePic || pic} 
                             alt="profile pic" 
                         />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex-col hidden lg:flex">
                         <h4 className="font-semibold text-[13px] leading-tight">
                             {user?.lastName} {user?.firstName} 
                         </h4>
@@ -113,23 +113,25 @@ function Navbar(){
                     </div>
                 </div>
 
-                {/* Three dots dropdown */}
-                <DropdownMenu>
-                    <DropdownMenuTrigger className="cursor-pointer outline-none p-1 rounded-lg hover:bg-gray-200 transition-all">
-                        <MoreHorizontal size={18} className="text-gray-500" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent side="top" align="end">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/home/profile")}>
-                            Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout} className="text-red-500 cursor-pointer">
-                            Logout
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                {/* Three dots dropdown - hidden on small screens */}
+                <div className="hidden lg:block">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger className="cursor-pointer outline-none p-1 rounded-lg hover:bg-gray-200 transition-all">
+                            <MoreHorizontal size={18} className="text-gray-500" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent side="top" align="end">
+                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/home/profile")}>
+                                Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={handleLogout} className="text-red-500 cursor-pointer">
+                                Logout
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
         </div>
     );

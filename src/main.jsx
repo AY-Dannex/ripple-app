@@ -5,13 +5,16 @@ import './index.css'
 import App from './App.jsx'
 import { TooltipProvider } from './components/ui/tooltip'
 import { UserProvider } from "./context/UserContext"
+import { PostProvider } from "./context/PostContext"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <TooltipProvider>
         <UserProvider>
-          <App />
+          <PostProvider>
+            <App />
+          </PostProvider>
         </UserProvider>
       </TooltipProvider>
     </BrowserRouter>

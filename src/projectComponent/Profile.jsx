@@ -6,14 +6,17 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react";
 import PostCard from "./postCard"
 import pic from "../assets/pic.jpg"
+import PostSkeleton from "./PostSkeleton.jsx"
+import { usePosts } from "../context/PostContext.jsx"
 
 function Profile (){
     const { user, setUser } = useUser()
-    const [userPosts, setUserPosts] = useState([])
+    // const [userPosts, setUserPosts] = useState([])
     const [readOnly, setReadOnly] = useState(true)
     const [loading, setLoading] = useState(false)
     const [picLoading, setPicLoading] = useState(false)
     const [profilePic, setProfilePic] = useState(null)
+    const {userPosts, loadingPost, fetchUserPosts} = usePosts()
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -100,29 +103,31 @@ function Profile (){
         }
     }
 
-    const getUserPost = async () => {
-        try {
-            const response = await fetch("http://localhost:5000/api/post/user", {
-                method: "GET",
-                credentials: "include"
-            })
+    // const getUserPost = async () => {
+    //     try {
+    //         const response = await fetch("http://localhost:5000/api/post/user", {
+    //             method: "GET",
+    //             credentials: "include"
+    //         })
 
-            const data = await response.json()
+    //         const data = await response.json()
 
-            if(response.ok){
-                setUserPosts(data.userPost)
-                console.log(data.userPost)
-            }
-        } catch (error) {
-            console.log(error.message)
-        }
-    }
+    //         if(response.ok){
+    //             setUserPosts(data.userPost)
+    //             console.log(data.userPost)
+    //         }
+    //     } catch (error) {
+    //         console.log(error.message)
+    //     }
+    // }
 
     const allUserPosts = userPosts?.slice().reverse().map((post) => (
         <PostCard 
             key={post._id}
             profilePic={user?.profilePic || pic}
             username={post.user.username}
+            firstName={post.user.firstName}
+            lastName={post.user.lastName}
             content={post.description}
             image={post.image}
             visibility={post.visibility}
@@ -145,7 +150,7 @@ function Profile (){
 
         setProfilePic(user?.profilePic || pic)
 
-        getUserPost()
+        fetchUserPosts()
     }, [])
 
     return(
@@ -213,8 +218,14 @@ function Profile (){
             </div>
             <div className="mt-15">
                 <h1 className="text-[20px] font-medium text-center">My Posts</h1>
-                <div className="flex flex-col gap-2">
-                    { allUserPosts }
+                <div className="flex flex-col gap-2 mt-10">
+                    { 
+                        loadingPost? (
+                            <PostSkeleton />
+                        ) : (
+                            allUserPosts
+                        )
+                    }
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 function Explore (){
     return(
-        <div>
-            <h1>jlbfukfbrhfbe4hkv4yfgvhkrefvhk</h1>
+        <div className="w-full h-screen grid place-content-center">
+            <h1>Coming soon...</h1>
         </div>
     )
 }

@@ -1,7 +1,7 @@
 function Message (){
     return(
-        <div>
-            
+        <div className="w-full h-screen grid place-content-center">
+            <h1>Coming soon...</h1>
         </div>
     )
 }
