@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useUser } from "../context/UserContext";
 import { ImagePlus } from "lucide-react";
 import { usePosts } from "../context/PostContext";
+import { Loader2 } from "lucide-react";
 import pic from "../assets/pic.jpg"
 
 function WritePost () {
@@ -74,7 +75,7 @@ function WritePost () {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button onClick={handlePost} className="cursor-pointer px-5 bg-purple-500">Post</Button>
+                <Button onClick={handlePost} className="cursor-pointer px-5 bg-purple-500">{loading? <Loader2 className="animate-spin" /> : "Post"}</Button>
             </div>
             <hr />
         </div>

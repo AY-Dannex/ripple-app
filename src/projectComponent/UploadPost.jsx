@@ -24,7 +24,7 @@ function UploadPost (){
     const [imageFile, setImageFile] = useState(null)
     const [loading, setLoading] = useState(false)
     const fileInputRef = useRef(null)
-    const { fetchPosts } = usePosts()
+    const { fetchPosts, setPostsLoaded, setPosts } = usePosts()
 
 
     const handlePost = async () => {
@@ -53,8 +53,10 @@ function UploadPost (){
             setImageFile(null)
             if(fileInputRef) fileInputRef.current.value = ""
             setLoading(false)
+            // setPosts(prev => [data.newPost, ...prev])
+            setPostsLoaded(false)
             fetchPosts()
-            // window.location.reload()
+            window.location.reload()
         }else{
             toast.error(data.message)
             setLoading(false)

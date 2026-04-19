@@ -39,10 +39,11 @@ function Post () {
     const allPosts = posts?.slice().reverse().map((post) => (
         <PostCard  
             key={post._id}
-            profilePic={post.user.profilePic || pic}
-            firstName={post.user.firstName}
-            lastName={post.user.lastName}
-            username={post.user.username}
+            id={post._id}
+            profilePic={post.user?.profilePic || pic}
+            firstName={post.user?.firstName}
+            lastName={post.user?.lastName}
+            username={post.user?.username}
             content={post.description}
             image={post.image}
             visibility={post.visibility}

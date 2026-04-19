@@ -124,6 +124,7 @@ function Profile (){
     const allUserPosts = userPosts?.slice().reverse().map((post) => (
         <PostCard 
             key={post._id}
+            id={post._id}
             profilePic={user?.profilePic || pic}
             username={post.user.username}
             firstName={post.user.firstName}

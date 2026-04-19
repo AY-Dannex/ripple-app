@@ -8,7 +8,7 @@ import Explore from "./Explore.jsx"
 import Notification from "./Notification.jsx"
 import Message from "./Message.jsx"
 import Moderator from "./ModDash.jsx"
-import Admin from "./AdmDash.jsx"
+import AdminDashboard from "./AdmDash.jsx"
 
 import { Routes, Route, Navigate } from "react-router-dom"
 import { useUser } from "../context/UserContext.jsx"
@@ -40,7 +40,7 @@ function Webpage() {
                 <Route path="notifications" element={<Notification />} /> {/* /home/notifications */}
                 <Route path="messages" element={<Message />} />      {/* /home/messages */}
                 <Route path="mod-dashboard" element={<Moderator />}/>
-                <Route path="admin-dashboard" element={<Admin />}/>
+                <Route path="admin-dashboard" element={<AdminDashboard />} />
             </Route>
         </Routes>
     )

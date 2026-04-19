@@ -9,13 +9,16 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { toast } from "sonner"
 
 import { useUser } from "../context/UserContext.jsx"
+import { usePosts } from "../context/PostContext.jsx"
 
-function PostCard ({ profilePic, image, firstName, lastName, username, content, visibility, dateUpdated}) {
+function PostCard ({ profilePic, image, firstName, lastName, username, content, visibility, dateUpdated, id}) {
     const timeAgo = formatDistanceToNow(new Date(dateUpdated), { addSuffix: true })
     const [selectedImage, setSelectedImage] = useState(null)
     const { user } = useUser()
+    const { deletePost } = usePosts()
 
     return (
         <div className="flex flex-col">
@@ -28,7 +31,7 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
                         <div className="w-full flex justify-between items-center">
                             <div className="flex flex-col">
                                 <h4 className="font-medium">{lastName} {firstName}</h4> 
-                                <small>@{username}</small>
+                                <small className="text-gray-500">@{username}</small>
                             </div>
                             <div className="flex flex-col items-end">
                                 <small>{visibility}</small>
@@ -44,10 +47,10 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
                                     {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                                     {/* <DropdownMenuSeparator /> */}
                                     <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
-                                    {(user?.role === "admin" || user?.role === "moderator")  && (
+                                    {(username === user?.username || user?.role === "admin" || user?.role === "moderator")  && (
                                         <div>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-red-500 cursor-pointer">Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => deletePost(id)} className="text-red-500 cursor-pointer">Delete</DropdownMenuItem>
                                         </div>
                                         )}
                                 </DropdownMenuContent>
@@ -68,7 +71,7 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
                         <img 
                             src={image} 
                             alt="post" 
-                            className="object-cover w-full cursor-pointer scale-150 hover:opacity-90 transition-opacity"
+                            className="object-cover w-full cursor-pointer  hover:opacity-90 transition-opacity"
                             onClick={() => setSelectedImage(image)}
                         />
                     </div>

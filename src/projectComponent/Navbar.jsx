@@ -21,7 +21,7 @@ import {
 import { toast } from "sonner";
 import pic from "../assets/pic.jpg"
 
-function Navbar(){
+function Navbar({ setShowAdminPanel, setActivePage }){
     const { user, setUser } = useUser()
     const navigate = useNavigate()
     const location = useLocation()
@@ -49,10 +49,10 @@ function Navbar(){
 
     const navLinks = [
         { to: "/home", label: "Home", icon: Home },
+        { to: "/home/profile", label: "Profile", icon: User },
         { to: "/home/explore", label: "Explore", icon: Compass },
         { to: "/home/notifications", label: "Notifications", icon: Bell },
         { to: "/home/messages", label: "Messages", icon: MessageCircle },
-        { to: "/home/profile", label: "Profile", icon: User },
     ]
 
     if (user?.role === "admin") {
