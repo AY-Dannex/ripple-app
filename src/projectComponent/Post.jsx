@@ -51,8 +51,8 @@ function Post () {
         />
     ) )
     return(
-        <div className="relative h-screen">
-            <div className="sticky top-0 z-10 bg-[#fff]">
+        <div className="relative">
+            <div className="z-10 bg-[#fff]">
                 <WritePost />
             </div>
             {
