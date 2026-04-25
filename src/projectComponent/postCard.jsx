@@ -14,11 +14,17 @@ import { toast } from "sonner"
 import { useUser } from "../context/UserContext.jsx"
 import { usePosts } from "../context/PostContext.jsx"
 
-function PostCard ({ profilePic, image, firstName, lastName, username, content, visibility, dateUpdated, id}) {
+function PostCard ({ profilePic, image, firstName, lastName, username, content, visibility, dateUpdated, id, pageType }) {
     const timeAgo = formatDistanceToNow(new Date(dateUpdated), { addSuffix: true })
     const [selectedImage, setSelectedImage] = useState(null)
     const { user } = useUser()
     const { deletePost } = usePosts()
+
+    const canDelete = () => {
+        if (pageType === "admin") return true
+        if (pageType === "profile") return user.username === username
+        if (pageType === "feed") return false   
+    }
 
     return (
         <div className="flex flex-col">
@@ -46,13 +52,13 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
                                 <DropdownMenuContent>
                                     {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                                     {/* <DropdownMenuSeparator /> */}
-                                    <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
-                                    {(username === user?.username || user?.role === "admin" || user?.role === "moderator")  && (
+                                    <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>                                 
+                                       { canDelete() && (
                                         <div>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => deletePost(id)} className="text-red-500 cursor-pointer">Delete</DropdownMenuItem>
                                         </div>
-                                        )}
+                                    )}
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>

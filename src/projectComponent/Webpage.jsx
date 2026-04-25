@@ -2,7 +2,7 @@ import Login from "./Login.jsx"
 import Register from "./Register.jsx"
 import Landing from "./Landing.jsx"
 import Home from "./Home.jsx"
-import Post from "./Post.jsx"
+import PostPage from "./PostPage.jsx"
 import Profile from "./Profile.jsx"
 import Explore from "./Explore.jsx"
 import Notification from "./Notification.jsx"
@@ -34,7 +34,7 @@ function Webpage() {
                 </ProtectedRoute>
             }>
                 {/* Nested routes render inside <Outlet /> */}
-                <Route index element={<Post />} />          {/* /home */}
+                <Route index element={<PostPage />} />          {/* /home */}
                 <Route path="profile" element={<Profile />} />       {/* /home/profile */}
                 <Route path="explore" element={<Explore />} />       {/* /home/explore */}
                 <Route path="notifications" element={<Notification />} /> {/* /home/notifications */}

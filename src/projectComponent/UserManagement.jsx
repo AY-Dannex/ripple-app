@@ -1,8 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { X, MoreVertical, List, DeleteIcon, Delete} from "lucide-react" 
+import { useEffect, useState, useRef } from "react";
+import { X, MoreVertical, List, DeleteIcon, SearchIcon} from "lucide-react" 
 import { Table as TableIcon } from "lucide-react";
 import { 
     Table,
@@ -43,7 +43,12 @@ function UserManagement (){
     const [loading, setLoading] = useState(false)
     const [loading2, setLoading2] = useState(false)
     const [logs, setLogs] = useState(null)
-    const [view, setView] = useState("list")
+    const [view, setView] = useState("table")
+    const dialogCloseRef = useRef(null)
+    const [isAssignRoleOpen, setIsAssignRoleOpen] = useState(false)
+    const [isSuspendOpen, setIsSuspendOpen] = useState(false)
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const dropdownTriggerRef = useRef(null)
 
     const handleSearch = async (email) => {
         try {
@@ -91,6 +96,8 @@ function UserManagement (){
 
             if(response.ok){
                 toast.success(data.message)
+                setIsAssignRoleOpen(false)  // 👈 close dialog
+                dropdownTriggerRef.current?.click()  // close dropdown
             }else{
                 toast.error(data.message)
             }
@@ -122,6 +129,8 @@ function UserManagement (){
 
             if(response.ok){
                 toast.success(data.message)
+                setIsSuspendOpen(false)
+                dropdownTriggerRef.current?.click()  // close dropdown
             }else{
                 toast.error(data.message)
             }
@@ -144,13 +153,15 @@ function UserManagement (){
 
             if (response.ok){
                 toast.success(data.message)
+                setIsDeleteOpen(false)
+                setUser(null)
+                dropdownTriggerRef.current?.click()  // close dropdown
             }else{
                 toast.error(data.message)
             }
         } catch (error) {
             console.log(error.message)
         } finally{
-            setUser(null)
             handleGetActivityLogs()
         }
     }
@@ -176,15 +187,38 @@ function UserManagement (){
             if(response.ok){
                 if (data.logs.length > 0){
                     setLogs(data.logs)
+                    console.log(data.logs)
+                    
                 }
-                // console.log(data.logs)
             }
         } catch (error) {
             console.log(error.message)
         }
     }
 
+    const handleDeleteEachActivityLog = async(id) => {
+        console.log(id)
+        try {
+            const response = await fetch(`http://localhost:5000/api/activity-logs/delete-each?ID=${id}`, {
+                method: "DELETE",
+                credentials: "include"
+            })
+
+            const data = await response.json()
+
+            if (response.ok){
+                toast.success(data.message)
+                setLogs(prev => prev.filter(log => log._id !== id))
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            console.log(error.message)
+        } 
+    }
+
     const handleDeleteAllActivityLogs = async () => {
+        setLoading2(true)
         try {
             const response = await fetch("http://localhost:5000/api/activity-logs/delete-all", {
                 method: "DELETE",
@@ -195,18 +229,20 @@ function UserManagement (){
 
             if(response.ok){
                 toast.success(data.message)
+                setLogs(null)
             }else{
                 toast.error(data.message)
             }
         } catch (error) {
             console.log(error.message)
-        } finally{
-            handleGetActivityLogs()
+        }finally{
+            setLoading2(false)
         }
     }
-
+    
     useEffect(() => {
-    }, [logs])
+        handleGetActivityLogs()
+    }, [])
 
     return(
         <div>
@@ -215,10 +251,10 @@ function UserManagement (){
                 <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Search users by their email" className="max-w-90 !border-none focus:border-none focus:!ring-0 shadow-none rounded-sm" />
                 <Button onClick={() => handleSearch(email)} className="px-5 rounded-sm cursor-pointer"> { loading? <Loader2 className="animate-spin" /> : <Search className=""/>} </Button>
             </div>
-            <div className="my-10">
+            <div className="my-10 w-full h-[88px] relative">
                 {
-                    user && (
-                        <div className="flex items-center justify-between border p-3 rounded-lg max-w-[350px]">
+                    user ? ((
+                        <div className="absolute flex items-center justify-between border py-3 px-5 rounded-lg w-90">
                             <div className="flex items-center gap-3">
                                 <div className="w-[50px] h-[50px] rounded-[50px] border overflow-hidden">
                                     <img className="w-full h-full object-cover" src={user.profilePic || pic} alt="" />                 
@@ -241,7 +277,7 @@ function UserManagement (){
                                     {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                                     {/* <DropdownMenuSeparator /> */}
                                     <DropdownMenuItem onSelect={(e) => {e.preventDefault()}} className="cursor-pointer">
-                                        <Dialog>
+                                        <Dialog open={isAssignRoleOpen} onOpenChange={setIsAssignRoleOpen}>
                                             <DialogTrigger className="cursor-pointer">Assign Roles</DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
@@ -265,7 +301,7 @@ function UserManagement (){
                                                 </FieldGroup>
 
                                                 <DialogFooter>
-                                                    <DialogClose className="flex gap-3">
+                                                    <DialogClose ref={dialogCloseRef} className="flex gap-3">
                                                         <Button className="cursor-pointer px-4">Cancel</Button>
                                                     </DialogClose>
                                                         <Button onClick={handleAssignRole} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Save" }</Button>
@@ -274,7 +310,7 @@ function UserManagement (){
                                         </Dialog>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onSelect={(e) => {e.preventDefault()}} className="cursor-pointer">
-                                        <Dialog>
+                                        <Dialog open={isSuspendOpen} onOpenChange={setIsSuspendOpen}>
                                             <DialogTrigger className="cursor-pointer">Suspend User</DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
@@ -287,7 +323,7 @@ function UserManagement (){
                                                 </FieldGroup>
 
                                                 <DialogFooter>
-                                                    <DialogClose className="flex gap-3">
+                                                    <DialogClose ref={dialogCloseRef} className="flex gap-3">
                                                         <Button className="cursor-pointer px-4">Cancel</Button>
                                                     </DialogClose>
                                                         <Button onClick={handleSuspendUser} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Save" }</Button>
@@ -297,7 +333,7 @@ function UserManagement (){
                                     </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem onSelect={(e) => {e.preventDefault()}} className="text-red-500 cursor-pointer">
-                                            <Dialog>
+                                            <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                                             <DialogTrigger className="cursor-pointer">Delete User</DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
@@ -316,8 +352,19 @@ function UserManagement (){
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
-                    )
-                }
+                    )) : ((
+                            <div className="flex flex-col justify-center items-center max-w-[350px]">
+                                {
+                                   loading ? <Loader2 size={30} className="animate-spin" /> : ((
+                                    <div className="flex flex-col justify-center items-center">
+                                        <SearchIcon size={60} className="text-gray-500" />
+                                        <p>Search by email to render user</p>
+                                    </div>
+                                   ))
+                                }
+                            </div>
+                        )) 
+                } 
             </div>
 
             <div className="flex justify-between mb-5">
@@ -326,11 +373,11 @@ function UserManagement (){
                     <Button variant="outline" className="cursor-pointer px-5" onClick={() => setView("list")}> <List /> </Button>
                </div>
 
-               <Button onClick={() => handleDeleteAllActivityLogs()} className="cursor-pointer px-5"> Clear </Button>
+               <Button onClick={() => handleDeleteAllActivityLogs()} className="cursor-pointer w-20 px-5"> { loading2 ? <Loader2 className="animate-spin" /> :  "Clear" } </Button>
             </div>
             
             {
-                logs? ((
+                logs && logs.length > 0 ? ((
                         view === "table" ? (
                         (
                             <div>
@@ -349,20 +396,23 @@ function UserManagement (){
                                             <TableRow key={log._id}>
                                                 <TableCell>
                                                     <div className="flex gap-2 items-center">
-                                                        {log.targetUser.firstName} {log.targetUser.lastName}
-                                                        <small className={`rounded px-1 font-medium ${roleStyles[log.targetUser.role]}`}>{log.targetUser.role}</small>
+                                                        {log.targetUser?.lastName} {log.targetUser?.firstName}
+                                                        <small className={`rounded px-1 font-medium ${roleStyles[log.targetUser?.role]}`}>{log.targetUser?.role}</small>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>{log.action}</TableCell>
                                                 <TableCell>{log.details}</TableCell>
                                                 <TableCell>
                                                     <div className="flex gap-2 items-center">
-                                                        {log.performedBy.firstName} {log.performedBy.lastName}
+                                                        {log.performedBy.lastName} {log.performedBy.firstName}
                                                         <small className={`rounded px-1 font-medium ${roleStyles[log.performedBy.role]}`}>{log.performedBy.role}</small>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
                                                     {new Date(log.createdAt).toLocaleString()}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button onClick={() => handleDeleteEachActivityLog(log._id)} className="cursor-pointer px-4"> <DeleteIcon /> </Button>
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -376,14 +426,17 @@ function UserManagement (){
                         (
                             <div className="flex flex-col gap-3">
                                 {logs.map(log => (
-                                    <div key={log._id} className="p-4 border rounded-lg">
-                                        <p className="font-semibold">{log.targetUser.firstName} {log.targetUser.lastName}</p>
-                                        <p className="text-sm text-gray-500">{log.action}: {log.details}</p>
-                                        <div className="flex gap-2 items-center">
-                                            <p className="text-xs text-gray-400">Performed by: {log.performedBy.firstName} {log.performedBy.lastName}</p>
-                                            <small className={`rounded px-1 font-medium ${roleStyles[log.performedBy.role]}`}>{log.performedBy.role}</small>
+                                    <div key={log._id} className="p-4 border rounded-lg flex w-full justify-between items-center">
+                                        <div>
+                                            <p className="font-semibold">{log.targetUser.lastName} {log.targetUser.firstName}</p>
+                                            <p className="text-sm text-gray-500">{log.action}: {log.details}</p>
+                                            <div className="flex gap-2 items-center">
+                                                <p className="text-xs text-gray-400">Performed by: {log.performedBy.lastName} {log.performedBy.firstName}</p>
+                                                <small className={`rounded px-1 font-medium ${roleStyles[log.performedBy.role]}`}>{log.performedBy.role}</small>
+                                            </div>
+                                            <p className="text-xs text-gray-400">{new Date(log.createdAt).toLocaleString()}</p>
                                         </div>
-                                        <p className="text-xs text-gray-400">{new Date(log.createdAt).toLocaleString()}</p>
+                                        <Button onClick={() => handleDeleteEachActivityLog(log._id)} className="cursor-pointer px-4"> <DeleteIcon /> </Button>
                                     </div>
                                 ))}
                             </div>
@@ -391,7 +444,7 @@ function UserManagement (){
                     )
                 )) : ((
                     <div className="w-full flex justify-center mt-10">
-                        <p>No activity logs recorded yet.....</p>
+                        <p>No history recorded yet.....</p>
                     </div>
                 ))
             }

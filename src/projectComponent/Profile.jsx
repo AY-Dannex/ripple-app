@@ -134,6 +134,7 @@ function Profile (){
             visibility={post.visibility}
             dateUpdated={post.updatedAt}
             role={post.user.role}
+            pageType="profile"
         />
 ))
 
