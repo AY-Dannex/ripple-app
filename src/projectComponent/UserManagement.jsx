@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { useDebounce } from "../hooks/useDebounce.js"
 import { X, MoreVertical, List, DeleteIcon, SearchIcon} from "lucide-react" 
 import { Table as TableIcon } from "lucide-react";
 import { 
@@ -31,13 +32,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 import { Field, FieldGroup } from "../components/ui/field"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import pic from "../assets/pic.jpg"
+import OtherUserProfile from "./OtherUserProfile.jsx";
+import { useUser } from "@/context/UserContext.jsx";
 
 function UserManagement (){
     const [user, setUser] = useState(null)
     const [email, setEmail] = useState("")
+    const debouncedSearch = useDebounce(email, 500)
     const [role, setRole] = useState("")
     const [date, setDate] = useState("")
     const [loading, setLoading] = useState(false)
@@ -49,6 +58,7 @@ function UserManagement (){
     const [isSuspendOpen, setIsSuspendOpen] = useState(false)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const dropdownTriggerRef = useRef(null)
+    const { getOtherUserProfile } = useUser()
 
     const handleSearch = async (email) => {
         try {
@@ -62,6 +72,7 @@ function UserManagement (){
 
             if (response.ok){
                 setUser(data.user)
+                console.log(data.user)
                 // setEmail("")
                 // toast.success(data.message)
             }else{
@@ -77,7 +88,7 @@ function UserManagement (){
     }
 
 
-    const handleAssignRole = async () => {
+    const handleAssignRole = async (singleUser) => {
         setLoading2(true)
         try {
             const response = await fetch("http://localhost:5000/api/user/assign-role", {
@@ -87,7 +98,7 @@ function UserManagement (){
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: user.email,
+                    email: singleUser.email,
                     newRole: role
                 })
             })
@@ -110,7 +121,7 @@ function UserManagement (){
         }
     }
 
-    const handleSuspendUser = async () => {
+    const handleSuspendUser = async (singleUser) => {
         setLoading2(true)
         try {
             const response = await fetch("http://localhost:5000/api/user/suspend", {
@@ -120,7 +131,7 @@ function UserManagement (){
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: user.email,
+                    email: singleUser.email,
                     suspendedUntil: date
                 })
             })
@@ -187,7 +198,7 @@ function UserManagement (){
             if(response.ok){
                 if (data.logs.length > 0){
                     setLogs(data.logs)
-                    console.log(data.logs)
+                    // console.log(data.logs)
                     
                 }
             }
@@ -242,30 +253,35 @@ function UserManagement (){
     
     useEffect(() => {
         handleGetActivityLogs()
-    }, [])
+    })
+
+    useEffect(() => {
+        if (debouncedSearch) {
+            handleSearch(debouncedSearch)  // only searches after user stops typing
+        }
+    }, [debouncedSearch])
 
     return(
-        <div>
+        <div className="relative">
             <h1 className="text-xl font-bold">User Management</h1>
-            <div className="mt-5 flex border-2 rounded-sm max-w-[400px]">
+            <div className="mt-5 flex border-2 rounded-sm max-w-90 ">
                 <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Search users by their email" className="max-w-90 !border-none focus:border-none focus:!ring-0 shadow-none rounded-sm" />
-                <Button onClick={() => handleSearch(email)} className="px-5 rounded-sm cursor-pointer"> { loading? <Loader2 className="animate-spin" /> : <Search className=""/>} </Button>
             </div>
-            <div className="my-10 w-full h-[88px] relative">
+            <div className="my-5 w-full h-fit flex flex-col gap-3">
                 {
-                    user ? ((
-                        <div className="absolute flex items-center justify-between border py-3 px-5 rounded-lg w-90">
+                    user ? user.map((singleUser) => (
+                        <div className="flex items-center justify-between border py-3 px-5 rounded-lg w-90">
                             <div className="flex items-center gap-3">
                                 <div className="w-[50px] h-[50px] rounded-[50px] border overflow-hidden">
-                                    <img className="w-full h-full object-cover" src={user.profilePic || pic} alt="" />                 
+                                    <img className="w-full h-full object-cover" src={singleUser.profilePic || pic} alt="" />                 
                                 </div>
                                 <div className="flex flex-col">
-                                    <h3 className="font-medium">{user.lastName} {user.firstName}</h3>
+                                    <h3 className="font-medium">{singleUser.lastName} {singleUser.firstName}</h3>
                                     <div className="flex gap-3 items-center">
-                                        <small>@{user.username}</small> 
-                                        <small className={`rounded px-1 font-medium ${roleStyles[user.role]}`} >{user.role}</small>
+                                        <small>@{singleUser.username}</small> 
+                                        <small className={`rounded px-1 font-medium ${roleStyles[singleUser.role]}`} >{singleUser.role}</small>
                                     </div>
-                                    <small className="font-medium">{user.email}</small>
+                                    <small className="font-medium">{singleUser.email}</small>
                                 </div>
                             </div>
 
@@ -276,6 +292,16 @@ function UserManagement (){
                                 <DropdownMenuContent>
                                     {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                                     {/* <DropdownMenuSeparator /> */}
+
+                                     <DropdownMenuItem onSelect={(e) => {e.preventDefault()}}>
+                                        <Drawer>
+                                            <DrawerTrigger className="cursor-pointer" onClick={() => getOtherUserProfile(singleUser._id)}>View Profile</DrawerTrigger>
+                                            <DrawerContent className="absolute m-auto max-w-[1000px]">
+                                                <OtherUserProfile />
+                                            </DrawerContent>
+                                        </Drawer>
+                                    </DropdownMenuItem>
+                                    
                                     <DropdownMenuItem onSelect={(e) => {e.preventDefault()}} className="cursor-pointer">
                                         <Dialog open={isAssignRoleOpen} onOpenChange={setIsAssignRoleOpen}>
                                             <DialogTrigger className="cursor-pointer">Assign Roles</DialogTrigger>
@@ -304,11 +330,12 @@ function UserManagement (){
                                                     <DialogClose ref={dialogCloseRef} className="flex gap-3">
                                                         <Button className="cursor-pointer px-4">Cancel</Button>
                                                     </DialogClose>
-                                                        <Button onClick={handleAssignRole} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Save" }</Button>
+                                                        <Button onClick={() => handleAssignRole(singleUser)} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Save" }</Button>
                                                 </DialogFooter>
                                             </DialogContent>                      
                                         </Dialog>
                                     </DropdownMenuItem>
+
                                     <DropdownMenuItem onSelect={(e) => {e.preventDefault()}} className="cursor-pointer">
                                         <Dialog open={isSuspendOpen} onOpenChange={setIsSuspendOpen}>
                                             <DialogTrigger className="cursor-pointer">Suspend User</DialogTrigger>
@@ -326,7 +353,7 @@ function UserManagement (){
                                                     <DialogClose ref={dialogCloseRef} className="flex gap-3">
                                                         <Button className="cursor-pointer px-4">Cancel</Button>
                                                     </DialogClose>
-                                                        <Button onClick={handleSuspendUser} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Save" }</Button>
+                                                        <Button onClick={() => handleSuspendUser(singleUser)} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Save" }</Button>
                                                 </DialogFooter>
                                             </DialogContent>                      
                                         </Dialog>
@@ -343,7 +370,7 @@ function UserManagement (){
                                                 <DialogFooter>
                                                     <DialogClose className="flex gap-3">
                                                         <Button className="cursor-pointer px-4">No</Button>
-                                                        <Button onClick={() => handleDeleteUser(email)} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Yes" }</Button>
+                                                        <Button onClick={() => handleDeleteUser(singleUser.email)} className="cursor-pointer px-4">{loading2? <Loader2 className="animate-spin" /> : "Yes" }</Button>
                                                     </DialogClose>
                                                 </DialogFooter>
                                             </DialogContent>                      
@@ -354,14 +381,14 @@ function UserManagement (){
                         </div>
                     )) : ((
                             <div className="flex flex-col justify-center items-center max-w-[350px]">
-                                {
+                                {/* {
                                    loading ? <Loader2 size={30} className="animate-spin" /> : ((
                                     <div className="flex flex-col justify-center items-center">
                                         <SearchIcon size={60} className="text-gray-500" />
                                         <p>Search by email to render user</p>
                                     </div>
                                    ))
-                                }
+                                } */}
                             </div>
                         )) 
                 } 
@@ -387,7 +414,6 @@ function UserManagement (){
                                             <TableHead>User</TableHead>
                                             <TableHead>Action</TableHead>
                                             <TableHead>Details</TableHead>
-                                            <TableHead>Performed By</TableHead>
                                             <TableHead>Date</TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -402,12 +428,6 @@ function UserManagement (){
                                                 </TableCell>
                                                 <TableCell>{log.action}</TableCell>
                                                 <TableCell>{log.details}</TableCell>
-                                                <TableCell>
-                                                    <div className="flex gap-2 items-center">
-                                                        {log.performedBy.lastName} {log.performedBy.firstName}
-                                                        <small className={`rounded px-1 font-medium ${roleStyles[log.performedBy.role]}`}>{log.performedBy.role}</small>
-                                                    </div>
-                                                </TableCell>
                                                 <TableCell>
                                                     {new Date(log.createdAt).toLocaleString()}
                                                 </TableCell>
@@ -428,13 +448,28 @@ function UserManagement (){
                                 {logs.map(log => (
                                     <div key={log._id} className="p-4 border rounded-lg flex w-full justify-between items-center">
                                         <div>
-                                            <p className="font-semibold">{log.targetUser.lastName} {log.targetUser.firstName}</p>
-                                            <p className="text-sm text-gray-500">{log.action}: {log.details}</p>
-                                            <div className="flex gap-2 items-center">
+                                            <p className="font-semibold">
+                                                {log.targetUser ? (
+                                                    `${log.targetUser.lastName} ${log.targetUser.firstName}`
+                                                ) : (
+                                                    (() => {
+                                                        try {
+                                                            const userInfo = JSON.parse(log.details)
+                                                            return `${userInfo.lastName} ${userInfo.firstName}`
+                                                        } catch {
+                                                            return "User Deleted"
+                                                        }
+                                                    })()
+                                                )}
+                                            </p>
+                                            <p className="text-sm text-gray-500">Action: {log.action}</p>
+                                            <p className="text-sm text-gray-500">Details: {log.details}</p>
+
+                                            {/* <div className="flex gap-2 items-center">
                                                 <p className="text-xs text-gray-400">Performed by: {log.performedBy.lastName} {log.performedBy.firstName}</p>
                                                 <small className={`rounded px-1 font-medium ${roleStyles[log.performedBy.role]}`}>{log.performedBy.role}</small>
-                                            </div>
-                                            <p className="text-xs text-gray-400">{new Date(log.createdAt).toLocaleString()}</p>
+                                            </div> */}
+                                            <p className="text-xs text-gray-400">Time: {new Date(log.createdAt).toLocaleString()}</p>
                                         </div>
                                         <Button onClick={() => handleDeleteEachActivityLog(log._id)} className="cursor-pointer px-4"> <DeleteIcon /> </Button>
                                     </div>

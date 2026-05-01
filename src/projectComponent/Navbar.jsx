@@ -98,9 +98,31 @@ function Navbar({ setShowAdminPanel, setActivePage }){
             {/* User section at bottom */}
             <div className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-gray-100 transition-all duration-200">
                 <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-purple-200 flex-shrink-0">
+                    <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-purple-200 flex-shrink-0 cursor-pointer lg:cursor-default">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild className="lg:hidden">
+                                <img 
+                                    className="w-full h-full object-cover" 
+                                    src={user?.profilePic || pic} 
+                                    alt="profile pic" 
+                                />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent side="top" align="end">
+                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/home/profile")}>
+                                    Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={handleLogout} className="text-red-500 cursor-pointer">
+                                    Logout
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        {/* Just show image on desktop without dropdown */}
                         <img 
-                            className="w-full h-full object-cover" 
+                            className="w-full h-full object-cover hidden lg:block" 
                             src={user?.profilePic || pic} 
                             alt="profile pic" 
                         />
@@ -113,7 +135,7 @@ function Navbar({ setShowAdminPanel, setActivePage }){
                     </div>
                 </div>
 
-                {/* Three dots dropdown - hidden on small screens */}
+                {/* Three dots dropdown - only on desktop */}
                 <div className="hidden lg:block">
                     <DropdownMenu>
                         <DropdownMenuTrigger className="cursor-pointer outline-none p-1 rounded-lg hover:bg-gray-200 transition-all">

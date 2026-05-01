@@ -4,9 +4,10 @@ import UserManagement from "./UserManagement";
 import PostManagement from "./PostManagement";
 
 function AdminDashboard (){
-    const [tabName, setTabName] = useState(null)
+    const [tabName, setTabName] = useState("User Management")
+    // const [tabName, setTabName] = useState("User Management")
     const links = ["User Management", "Post Management"]
-    const tabs = links.map((tab) => (<Button key={tab} value={tab} onClick={(e) => setTabName(e.target.value)} className="px-5 py-5 bg-purple-500 cursor-pointer"> {tab} </Button>))
+    const tabs = links.map((tab) => (<Button key={tab} onClick={() => setTabName(tab)} className={`px-5 py-5 cursor-pointer transition ${tabName === tab ? "bg-purple-200 text-purple-500" : "bg-transparent text-purple-500"}`}> {tab} </Button>))
     
     useEffect(() => {
         // console.log(tabName)
@@ -14,7 +15,7 @@ function AdminDashboard (){
     
     return(
         <div>
-            <div className="max-w-[400px] mt-4 m-auto flex flex-row justify-between">
+            <div className="w-fit gap-1 border rounded rounded-xl  py-1 px-1 mt-4 m-auto flex flex-row  justify-between">
                 {tabs}
             </div>
             <div className="px-5 py-5">

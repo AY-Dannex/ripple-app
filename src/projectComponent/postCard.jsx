@@ -9,15 +9,21 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 import { toast } from "sonner"
+import OtherUserProfile from "./OtherUserProfile.jsx"
 
 import { useUser } from "../context/UserContext.jsx"
 import { usePosts } from "../context/PostContext.jsx"
 
-function PostCard ({ profilePic, image, firstName, lastName, username, content, visibility, dateUpdated, id, pageType }) {
+function PostCard ({ profilePic, image, firstName, lastName, username, content, visibility, dateUpdated, id, pageType, userID }) {
     const timeAgo = formatDistanceToNow(new Date(dateUpdated), { addSuffix: true })
     const [selectedImage, setSelectedImage] = useState(null)
-    const { user } = useUser()
+    const { user, getOtherUserProfile } = useUser()
     const { deletePost } = usePosts()
 
     const canDelete = () => {
@@ -52,6 +58,14 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
                                 <DropdownMenuContent>
                                     {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                                     {/* <DropdownMenuSeparator /> */}
+                                <DropdownMenuItem onSelect={(e) => {e.preventDefault()}}>
+                                        <Drawer>
+                                            <DrawerTrigger className="cursor-pointer" onClick={() => getOtherUserProfile(userID)}>View Profile</DrawerTrigger>
+                                            <DrawerContent className="absolute m-auto max-w-[1000px]">
+                                                <OtherUserProfile />
+                                            </DrawerContent>
+                                        </Drawer>
+                                    </DropdownMenuItem>
                                     <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>                                 
                                        { canDelete() && (
                                         <div>

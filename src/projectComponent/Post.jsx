@@ -19,6 +19,7 @@ function Post ({ pageType = "feed" }) {
         <PostCard  
             key={post._id}
             id={post._id}
+            userID={post.user._id}
             profilePic={post.user?.profilePic || pic}
             firstName={post.user?.firstName}
             lastName={post.user?.lastName}

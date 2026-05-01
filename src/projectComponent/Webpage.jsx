@@ -20,6 +20,22 @@ const ProtectedRoute = ({ children }) => {
     return children
 }
 
+const ModeratorRoute = ({ children }) => {
+    const { user, loading } = useUser()
+    if(loading) return null
+    if(!user) return <Navigate to="/login" />
+    if(user.role !== "moderator") return <Navigate to="/home" />
+    return children
+}
+
+const AdminRoute = ({ children }) => {
+    const { user, loading } = useUser()
+    if(loading) return null
+    if(!user) return <Navigate to="/login" />
+    if(user.role !== "admin") return <Navigate to="/home" />
+    return children
+}
+
 function Webpage() {
     return(
         <Routes>
@@ -34,13 +50,21 @@ function Webpage() {
                 </ProtectedRoute>
             }>
                 {/* Nested routes render inside <Outlet /> */}
-                <Route index element={<PostPage />} />          {/* /home */}
+                {/* <Route index element={<PostPage />} />          /home */}
                 <Route path="profile" element={<Profile />} />       {/* /home/profile */}
                 <Route path="explore" element={<Explore />} />       {/* /home/explore */}
                 <Route path="notifications" element={<Notification />} /> {/* /home/notifications */}
                 <Route path="messages" element={<Message />} />      {/* /home/messages */}
-                <Route path="mod-dashboard" element={<Moderator />}/>
-                <Route path="admin-dashboard" element={<AdminDashboard />} />
+                <Route path="mod-dashboard" element={
+                    <ModeratorRoute>
+                        <Moderator />
+                    </ModeratorRoute>
+                }/>
+                <Route path="admin-dashboard" element={
+                    <AdminRoute>
+                        <AdminDashboard />
+                    </AdminRoute>
+                } />
             </Route>
         </Routes>
     )
