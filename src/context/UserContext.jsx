@@ -6,7 +6,7 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [profile, setProfile] = useState(null)
     const [loading, setLoading] = useState(true)
-    const [contacts, setContacts] = useState(null)
+    const [contacts, setContacts] = useState([])
     const [loadingProfile, setLoadingProfile] = useState(false)
     const [loadingContact, setLoadingContact] = useState(false)
 
@@ -88,6 +88,9 @@ export const UserProvider = ({ children }) => {
         // console.log(user)
     }, [])
 
+    useEffect(() => {
+    })
+
     // useEffect(() => {
     //     if (!user) return
 
@@ -121,7 +124,7 @@ export const UserProvider = ({ children }) => {
     // }, [user])
 
     return (
-        <UserContext.Provider value={{ user, setUser, loading, profile, loadingProfile, contacts, loadingContact, getOtherUserProfile }}>
+        <UserContext.Provider value={{ user, setUser, loading, profile, loadingProfile, contacts, loadingContact, getOtherUserProfile, getAllUsers }}>
             {children}
         </UserContext.Provider>
     );

@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button.jsx"
 import { Link } from "react-router-dom"
 import { useEffect, useRef } from "react"
-import Login from "./Login"
-import Register from "./Register"
+import Authentication from "./Authentication.jsx"
 
 function Landing() {
     const heroRef = useRef(null)
@@ -99,7 +98,7 @@ function Landing() {
 
                     {/* Nav buttons */}
                     <div className="flex gap-3">
-                        <Link to="/login">
+                        <Link to="/authentication">
                             <Button
                                 variant="ghost"
                                 className="text-white/70 hover:text-white hover:bg-white/10 cursor-pointer px-5 rounded-full transition-all duration-200"
@@ -107,7 +106,7 @@ function Landing() {
                                 Sign In
                             </Button>
                         </Link>
-                        <Link to="/register">
+                        <Link to="/authentication">
                             <Button
                                 className="cursor-pointer px-5 rounded-full font-medium transition-all duration-200 hover:scale-105"
                                 style={{
@@ -190,7 +189,7 @@ function Landing() {
                         animation: "fadeSlideUp 0.6s ease forwards",
                     }}
                 >
-                    <Link to="/register">
+                    <Link to="/authentication">
                         <Button
                             className="cursor-pointer px-8 py-6 text-base rounded-full font-semibold transition-all duration-200 hover:scale-105 hover:shadow-2xl"
                             style={{
@@ -203,7 +202,7 @@ function Landing() {
                             Get Started →
                         </Button>
                     </Link>
-                    <Link to="/Login">
+                    <Link to="/authentication">
                         <Button
                             variant="outline"
                             className="cursor-pointer px-8 py-6 text-base rounded-full font-semibold transition-all duration-200 hover:scale-105"

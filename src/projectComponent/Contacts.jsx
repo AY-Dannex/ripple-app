@@ -4,18 +4,24 @@ import ContactSkeleton from "./ContactSkeleton.jsx";
 import pic from "../assets/pic.jpg"
 
 function Contact(){
-    const { contacts, loadingContact } = useUser()
+    const {user, getAllUsers, contacts, loadingContact } = useUser()
     const users = contacts?.map((contact) => (
-        <div className="flex gap-2 items-center border p-2 rounded-xl cursor-pointer hover:bg-gray-100">
-            <div className="w-10 h-10 overflow-hidden border-2 border-purple-300 rounded-3xl">
-                <img className="w-full h-full object-cover" src={contact.profilePic || pic} alt="" />
+        user.id !== contact._id && (
+            <div key={contact._id} className="flex gap-2 items-center border p-2 rounded-xl cursor-pointer hover:bg-gray-100">
+                <div className="w-10 h-10 overflow-hidden border-2 border-purple-300 rounded-3xl">
+                    <img className="w-full h-full object-cover" src={contact.profilePic || pic} alt="" />
+                </div>
+                <div className="flex flex-col ">
+                    <h1 className="text-[14px] font-medium">{contact.lastName} {contact.firstName}</h1>
+                    <small>@{contact.username}</small>
+                </div>
             </div>
-            <div className="flex flex-col ">
-                <h1>{contact.lastName} {contact.firstName}</h1>
-                <small>@{contact.username}</small>
-            </div>
-        </div>
+        )
     ))
+
+    // useEffect(() => {
+    //     getAllUsers()
+    // })
     return(
         <div className="border px-5 py-3 h-screen ">
             <h1 className="text-xl font-medium">Contacts</h1>

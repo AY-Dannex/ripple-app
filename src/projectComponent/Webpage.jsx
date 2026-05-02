@@ -1,6 +1,5 @@
-import Login from "./Login.jsx"
-import Register from "./Register.jsx"
 import Landing from "./Landing.jsx"
+import Authentication from "./Authentication.jsx"
 import Home from "./Home.jsx"
 import PostPage from "./PostPage.jsx"
 import Profile from "./Profile.jsx"
@@ -16,14 +15,14 @@ import { useUser } from "../context/UserContext.jsx"
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useUser()
     if(loading) return null
-    if(!user) return <Navigate to="/login"/>
+    if(!user) return <Navigate to="/authentication"/>
     return children
 }
 
 const ModeratorRoute = ({ children }) => {
     const { user, loading } = useUser()
     if(loading) return null
-    if(!user) return <Navigate to="/login" />
+    if(!user) return <Navigate to="/authentication" />
     if(user.role !== "moderator") return <Navigate to="/home" />
     return children
 }
@@ -31,7 +30,7 @@ const ModeratorRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
     const { user, loading } = useUser()
     if(loading) return null
-    if(!user) return <Navigate to="/login" />
+    if(!user) return <Navigate to="/authentication" />
     if(user.role !== "admin") return <Navigate to="/home" />
     return children
 }
@@ -40,8 +39,7 @@ function Webpage() {
     return(
         <Routes>
             <Route path="/" element={<Landing />}/>
-            <Route path="/login" element={<Login />}/>
-            <Route path="/register" element={<Register />}/>
+            <Route path="/authentication" element={<Authentication />}/>
             
             {/* Home is now the layout wrapper */}
             <Route path="/home" element={

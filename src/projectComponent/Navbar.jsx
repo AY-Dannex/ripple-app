@@ -38,7 +38,7 @@ function Navbar({ setShowAdminPanel, setActivePage }){
                 toast.success(data.message)
                 setUser(null)
                 document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-                navigate("/login")
+                navigate("/authentication")
             }else{
                 toast.error(data.message)
             }
