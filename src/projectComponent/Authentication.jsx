@@ -11,7 +11,9 @@ import { Waves } from "lucide-react";
 function Authentication(){
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [otp, setOtp] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [otpLoading, setOtpLoading] = useState(false)
     const navigate = useNavigate()
     const { setUser } = useUser()
     const [firstName, setFirstName] = useState("")
@@ -53,6 +55,32 @@ function Authentication(){
         }
     }
 
+    const handleRequestOTP = async () => {
+        try {
+            setOtpLoading(true)
+            const response = await fetch("http://localhost:5000/api/user/request-otp", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email })
+            })
+
+            const data = await response.json()
+
+            if(response.ok){
+                toast.success(data.message)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            console.log(error.message)
+        }finally{
+            setOtpLoading(false)
+        }
+    }
+
     const handleRegister = async () => {
         try {
             setIsLoading(true)
@@ -62,7 +90,7 @@ function Authentication(){
                     "Content-Type": "application/json"
                 },
                 credentials: "include",
-                body: JSON.stringify({ firstName, lastName, username, email, password })
+                body: JSON.stringify({ firstName, lastName, username, email, password, otp })
             })
             const data = await response.json()
             
@@ -79,6 +107,8 @@ function Authentication(){
             setIsLoading(false)
         }
     }
+
+    
 
     const tabs = links.map((link) => (<Button onClick={() => setTab(link)} className={`px-10 py-[16px] cursor-pointer bg-transparent transition ${ tab === link ? "bg-purple-700" : "" }`}>{link}</Button>))
 
@@ -134,13 +164,18 @@ function Authentication(){
                                             <Label className="text-white">Username:</Label>
                                             <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="py-5 text-white border-gray-100/30 focus-visible:border-1 focus-visible:border-purple-500 focus-visible:ring-0 focus-visible:ring-offset-0" placeholder="johndoe"></Input>
                                             <Label className="text-white">Email:</Label>
-                                            <Input type="registerEmail" value={email} onChange={(e) => setEmail(e.target.value)} className="py-5 text-white border-gray-100/30 focus-visible:border-1 focus-visible:border-purple-500 focus-visible:ring-0 focus-visible:ring-offset-0" placeholder="you@example.com"></Input>
+                                            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="py-5 text-white border-gray-100/30 focus-visible:border-1 focus-visible:border-purple-500 focus-visible:ring-0 focus-visible:ring-offset-0" placeholder="you@example.com"></Input>
+                                            <Label className="text-white">OTP:</Label>
+                                            <div className="flex items-center gap-2 h-11 overflow-hidden  rounded-lg border border-gray-100/30 focus-visible:border-1 focus-visible:border-purple-500 focus-visible:ring-0 focus-visible:ring-offset-0">
+                                                <Input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} className="py-5 text-white !border-none focus:border-none focus:!ring-0 shadow-none" placeholder="******"></Input>
+                                                <Button onClick={handleRequestOTP} className="w-30 h-12 mr-[-2px] bg-purple-500 rounded-none cursor-pointer hover:bg-purple-600">{ otpLoading ? <Loader2 className="animate-spin"/> : "Request OTP" }</Button>
+                                            </div>
                                             <Label className="text-white">Password:</Label>
                                             <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="py-5 text-white border-gray-100/30 focus-visible:border-1 focus-visible:border-purple-500 focus-visible:ring-0 focus-visible:ring-offset-0" placeholder="Min. 8 characters"></Input>
 
                                             {/* <Input type="checkbox" name="password" className="w-4"/>
                                             <label for="password">Check Password</label> */}
-                                            <Button disable={isLoading} onClick={handleRegister} className="py-6 cursor-pointer bg-purple-500">{isLoading ? <Loader2 className="animate-spin" /> : "Create Account"} </Button>
+                                            <Button disable={isLoading} onClick={handleRegister} className="py-6 cursor-pointer bg-purple-500 hover:bg-purple-600">{isLoading ? <Loader2 className="animate-spin" /> : "Create Account"} </Button>
                                         </CardContent>
                                     </Card>
                             </div>

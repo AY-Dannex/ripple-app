@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button.jsx"
 import { Link } from "react-router-dom"
 import { useEffect, useRef } from "react"
 import Authentication from "./Authentication.jsx"
+import { Waves } from "lucide-react"
 
 function Landing() {
     const heroRef = useRef(null)
@@ -87,7 +88,7 @@ function Landing() {
                 >
                     {/* Logo */}
                     <div className="flex items-center gap-2">
-                        <span style={{ fontSize: "22px" }}>🌊</span>
+                        <span style={{ fontSize: "22px" }}><Waves className="text-purple-500"/></span>
                         <span
                             className="font-bold text-white tracking-tight"
                             style={{ fontSize: "20px", letterSpacing: "-0.02em" }}
@@ -98,7 +99,7 @@ function Landing() {
 
                     {/* Nav buttons */}
                     <div className="flex gap-3">
-                        <Link to="/authentication">
+                        <Link to="/authentication" type="Log In">
                             <Button
                                 variant="ghost"
                                 className="text-white/70 hover:text-white hover:bg-white/10 cursor-pointer px-5 rounded-full transition-all duration-200"
@@ -106,7 +107,7 @@ function Landing() {
                                 Sign In
                             </Button>
                         </Link>
-                        <Link to="/authentication">
+                        <Link to="/authentication" type="Sign Up">
                             <Button
                                 className="cursor-pointer px-5 rounded-full font-medium transition-all duration-200 hover:scale-105"
                                 style={{

@@ -32,6 +32,12 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
         if (pageType === "feed") return false   
     }
 
+    const canView = () => {
+        if (pageType === "profile") return false
+        if (pageType === "feed") return true
+        if (pageType === "admin") return true
+    }
+
     return (
         <div className="flex flex-col">
             <div className="flex px-5 gap-2 items-center">
@@ -58,14 +64,18 @@ function PostCard ({ profilePic, image, firstName, lastName, username, content, 
                                 <DropdownMenuContent>
                                     {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                                     {/* <DropdownMenuSeparator /> */}
-                                <DropdownMenuItem onSelect={(e) => {e.preventDefault()}}>
-                                        <Drawer>
-                                            <DrawerTrigger className="cursor-pointer" onClick={() => getOtherUserProfile(userID)}>View Profile</DrawerTrigger>
-                                            <DrawerContent className="absolute m-auto max-w-[1000px]">
-                                                <OtherUserProfile />
-                                            </DrawerContent>
-                                        </Drawer>
-                                    </DropdownMenuItem>
+                                    {
+                                        canView() && (
+                                            <DropdownMenuItem onSelect={(e) => {e.preventDefault()}}>
+                                                <Drawer>
+                                                    <DrawerTrigger className="cursor-pointer" onClick={() => getOtherUserProfile(userID)}>View Profile</DrawerTrigger>
+                                                    <DrawerContent className="absolute m-auto max-w-[1000px]">
+                                                        <OtherUserProfile />
+                                                    </DrawerContent>
+                                                </Drawer>
+                                            </DropdownMenuItem>
+                                        )
+                                    }
                                     <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>                                 
                                        { canDelete() && (
                                         <div>

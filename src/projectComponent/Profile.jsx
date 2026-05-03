@@ -3,15 +3,22 @@ import { useUser } from "../context/UserContext"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react";
+import { Loader2, CameraIcon } from "lucide-react";
 import PostCard from "./postCard"
 import pic from "../assets/pic.jpg"
 import PostSkeleton from "./PostSkeleton.jsx"
 import { usePosts } from "../context/PostContext.jsx"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 function Profile (){
     const { user, setUser } = useUser()
-    // const [userPosts, setUserPosts] = useState([])
     const [readOnly, setReadOnly] = useState(true)
     const [loading, setLoading] = useState(false)
     const [picLoading, setPicLoading] = useState(false)
@@ -61,14 +68,8 @@ function Profile (){
         }
     }
 
-    // const getProfilePic = (e) => {
-    //     setProfilePic(e.target.files[0])
-    //     console.log(profilePic)
-    // }
-
     const handleUploadProfilePic = async (e) =>{
         try {
-            // getProfilePic(e)
             setPicLoading(true)
             const file = e.target.files[0]
 
@@ -88,8 +89,6 @@ function Profile (){
             const data = await response.json()
 
             if(response.ok){
-                // console.log("data:", data)
-                // console.log("data.profile:", data.profile) 
                 toast.success(data.message)
                 setUser(data.profile)
                 setPicLoading(false)
@@ -103,23 +102,28 @@ function Profile (){
         }
     }
 
-    // const getUserPost = async () => {
-    //     try {
-    //         const response = await fetch("http://localhost:5000/api/post/user", {
-    //             method: "GET",
-    //             credentials: "include"
-    //         })
+    const handleDeleteProfilePic = async () => {
+        try {
+            setPicLoading(true)
+            const response = await fetch("http://localhost:5000/api/user/delete-profile-pic", {
+                method: "DELETE",
+                credentials: "include"
+            })
 
-    //         const data = await response.json()
+            const data = await response.json()
 
-    //         if(response.ok){
-    //             setUserPosts(data.userPost)
-    //             console.log(data.userPost)
-    //         }
-    //     } catch (error) {
-    //         console.log(error.message)
-    //     }
-    // }
+            if(response.ok){
+                toast.success(data.message)
+                setUser(data.profile)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            console.log(`Error: ${error.message}`)
+        } finally{
+            setPicLoading(false)
+        }
+    }
 
     const allUserPosts = userPosts?.slice().reverse().map((post) => (
         <PostCard 
@@ -159,26 +163,61 @@ function Profile (){
         <div className="w-full px-3 py-2">
             <h1 className="text-[20px] font-medium mb-3">My Profile</h1>
             <div className="w-full flex gap-5 items-center  py-5 px-5 rounded-xl border shadow-md">
-                <div className="pic w-30 h-30 rounded-[300px] relative border cursor-pointer overflow-hidden">
-                    {
-                        picLoading? (
-                            <div className="absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full h-full bg-black/50 h-[10%] z-10 cursor-pointer">
-                                <small className="absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full text-center text-[14px] font-medium cursor-pointer text-white ">{picLoading? <Loader2 className="animate-spin ml-[40%]"/> : ""}</small>
+                {/* PROFILE PIC SECTION */}
+                <div className="w-30 h-30 relative">
+                    <div className="pic w-30 h-30 rounded-[300px] border overflow-hidden cursor-pointer relative">
+                        {profilePic && <img src={user?.profilePic || pic} alt="profile-pic" className="w-full h-full object-cover cursor-pointer" />}
+                        
+                        {/* Dropdown overlay */}
+                        {!picLoading && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild className="outline-none">
+                                    <div className="absolute inset-0 z-10 cursor-pointer rounded-[300px]"></div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-fit">
+                                    <DropdownMenuItem className="px-4 py-2 cursor-pointer">
+                                        <label htmlFor="picture" className="cursor-pointer w-full">Upload Photo</label>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="px-4 py-2 cursor-pointer">See Profile Picture</DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={handleDeleteProfilePic} className="px-4 py-2 text-red-500 cursor-pointer">
+                                        Delete Profile Picture
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
+
+                        {/* Loading state */}
+                        {picLoading && (
+                            <div className="absolute inset-0 bg-black/50 rounded-[300px] flex items-center justify-center z-20">
+                                <Loader2 className="animate-spin text-white" />
                             </div>
-                        ) : (
-                            <div className="hovereff absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full h-full bg-black/50 h-[10%] z-10 cursor-pointer ">
-                                <small className="absolute inset-o top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-full text-center text-[14px] font-medium cursor-pointer text-white ">Add photo</small>
-                            </div>
-                        )
-                    }
-                    {profilePic && <img src={profilePic} alt="profile-pic" className="z-5 w-full h-full object-cover cursor-pointer " />}
-                    <input type="file" disabled={picLoading} accept="image/*" onChange={(e) => handleUploadProfilePic(e)}  className="absolute z-15 inset-0 h-[100%] opacity-0 cursor-pointer"/>
+                        )}
+                    </div>
+
+                    {/* Camera icon - OUTSIDE overflow hidden */}
+                    <div className="absolute bottom-0 right-0 bg-black rounded-full w-8 h-8 flex items-center justify-center cursor-pointer z-20">
+                        <label htmlFor="picture" className="cursor-pointer flex items-center justify-center w-full h-full">
+                            <CameraIcon className="text-white" size={18}/>
+                        </label>
+                        <input 
+                            type="file" 
+                            id="picture" 
+                            disabled={picLoading} 
+                            accept="image/*" 
+                            onChange={(e) => handleUploadProfilePic(e)}  
+                            className="hidden"
+                        />
+                    </div>
                 </div>
+                
                 <div>
                     <h2 className="font-medium text-[18px]">{user?.lastName} {user?.firstName}</h2>
                     <small className="font-medium text-[#555]">{user?.role}</small>
                 </div>
             </div>
+
             <div className="w-full py-4 px-5 mt-3 rounded-xl border shadow-md">
                 <div className="w-full flex justify-between">
                     <h1 className="text-[20px] font-medium">Persornal Information</h1>
@@ -218,6 +257,7 @@ function Profile (){
                     <textarea readOnly={readOnly} placeholder="Add a bio" value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} className="w-full h-40 border rounded-xl p-2 text-[14px] resize-none"></textarea>
                 </div>
             </div>
+
             <div className="mt-15">
                 <h1 className="text-[20px] font-medium text-center">My Posts</h1>
                 <div className="flex flex-col gap-2 mt-10">
