@@ -1,11 +1,8 @@
 import { OTP } from "../models/otp.model.js";
 import { User } from "../models/user.model.js";
-import { TransactionalEmailsApi, SendSmtpEmail, ApiClient } from "@getbrevo/brevo";
+import { BrevoClient } from "@getbrevo/brevo";
 
-const apiClient = ApiClient.instance
-apiClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY
-
-const apiInstance = new TransactionalEmailsApi()
+const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY })
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString()
@@ -13,32 +10,30 @@ const generateOTP = () => {
 
 const sendOTPEmail = async (email, otp) => {
     try {
-        const sendSmtpEmail = new SendSmtpEmail()
-
-        sendSmtpEmail.subject = "Your OTP for Registration"
-        sendSmtpEmail.to = [{ email }]
-        sendSmtpEmail.sender = { name: "Ripple App", email: process.env.EMAIL_USER }
-        sendSmtpEmail.htmlContent = `
-            <div style="max-width: 400px; padding: 20px; border-radius: 5px; background-color: rgb(46, 46, 46);">
-                <div style="padding: 10px 20px 20px 20px; border-radius: 5px; background-color: black; color: white;">
-                    <h2 style="color: #8200DB;">Email OTP Verification</h2>
-                    <p style="text-align: justify;">
-                        Below is your one time passcode that you 
-                        need to use to complete your authentication.
-                        The verification code would be valid for 5 minutes.
-                        Please do not share this code with anyone.
-                    </p>
-                    <div style="width: 100%; border-radius: 5px; background-color: rgb(46, 46, 46);">
-                        <p style="font-size: 20px; padding: 8px 0; font-weight: bold; text-align: center;">${otp}</p>
+        await brevo.transactionalEmails.sendTransacEmail({
+            subject: "Your OTP for Registration",
+            to: [{ email }],
+            sender: { name: "Ripple App", email: process.env.EMAIL_USER },
+            htmlContent: `
+                <div style="max-width: 400px; padding: 20px; border-radius: 5px; background-color: rgb(46, 46, 46);">
+                    <div style="padding: 10px 20px 20px 20px; border-radius: 5px; background-color: black; color: white;">
+                        <h2 style="color: #8200DB;">Email OTP Verification</h2>
+                        <p style="text-align: justify;">
+                            Below is your one time passcode that you 
+                            need to use to complete your authentication.
+                            The verification code would be valid for 5 minutes.
+                            Please do not share this code with anyone.
+                        </p>
+                        <div style="width: 100%; border-radius: 5px; background-color: rgb(46, 46, 46);">
+                            <p style="font-size: 20px; padding: 8px 0; font-weight: bold; text-align: center;">${otp}</p>
+                        </div>
+                        <p>
+                            If you are having any issues with your account, 
+                            please don't hesitate to contact us
+                        </p>
                     </div>
-                    <p>
-                        If you are having any issues with your account, 
-                        please don't hesitate to contact us
-                    </p>
-                </div>
-            </div>`
-
-        await apiInstance.sendTransacEmail(sendSmtpEmail)
+                </div>`
+        })
         console.log("OTP email sent successfully to:", email)
     } catch (error) {
         console.error("Error sending OTP email:", error.message)
