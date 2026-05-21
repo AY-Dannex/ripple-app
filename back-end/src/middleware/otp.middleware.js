@@ -7,39 +7,44 @@ const generateOTP = () => {
 }
 
 const sendOTPEmail = async (email, otp) => {
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    })
+    try{
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        })
 
-    await transporter.sendMail({
-        from: `Ripple App <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: "Your OTP for Registration",
-        html: `
-            <div style="max-width: 400px; padding: 20px; border-radius: 5px; background-color: rgb(46, 46, 46);">
-                <div style="padding: 10px 20px 20px 20px; border-radius: 5px; background-color: black; color: white;">
-                    <h2 style="color: #8200DB;">Email OTP Verification</h2>
-                    <p style="text-align: justify;">
-                        Below is your one time passcode that you 
-                        need to use to complete your authentication.
-                        The verification code would be valid for 5 minutes.
-                        Please do not share this code with anyone.
-                    </p>
-                    <div style="width: 100%; border-radius: 5px; background-color: rgb(46, 46, 46);">
-                        <p style="font-size: 20px; padding: 8px 0; font-weight: bold; text-align: center;">${otp}</p>
+        await transporter.sendMail({
+            from: `Ripple App <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: "Your OTP for Registration",
+            html: `
+                <div style="max-width: 400px; padding: 20px; border-radius: 5px; background-color: rgb(46, 46, 46);">
+                    <div style="padding: 10px 20px 20px 20px; border-radius: 5px; background-color: black; color: white;">
+                        <h2 style="color: #8200DB;">Email OTP Verification</h2>
+                        <p style="text-align: justify;">
+                            Below is your one time passcode that you 
+                            need to use to complete your authentication.
+                            The verification code would be valid for 5 minutes.
+                            Please do not share this code with anyone.
+                        </p>
+                        <div style="width: 100%; border-radius: 5px; background-color: rgb(46, 46, 46);">
+                            <p style="font-size: 20px; padding: 8px 0; font-weight: bold; text-align: center;">${otp}</p>
+                        </div>
+                        <p>
+                            If you are having any issues with your account, 
+                            please don't hesitate to contact us
+                        </p>
                     </div>
-                    <p>
-                        If you are having any issues with your account, 
-                        please don't hesitate to contact us
-                    </p>
-                </div>
-            </div>
-        `
-    })
+                </div>  `
+        })
+        console.log("OTP email sent successfully to:", email)
+    } catch(error){
+        console.error("Error sending OTP email:", error)
+        throw error
+    }
 }
 
 export const requestOTP = async (req, res) => {
@@ -64,10 +69,13 @@ export const requestOTP = async (req, res) => {
 
         await sendOTPEmail(email, otp)
 
+        console.log("OTP process completed for:", email)
+
         res.status(200).json({
             message: "OTP sent to your email. Check your inbox or spam folder."
         })
     } catch (error) {
+        console.error("requestOTP error:", error.message)
         res.status(500).json({
             message: `Internal Server Error ${error.message}`
         })
