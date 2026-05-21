@@ -1,9 +1,11 @@
 import { OTP } from "../models/otp.model.js";
 import { User } from "../models/user.model.js";
-import * as Brevo from "@getbrevo/brevo";
+import { TransactionalEmailsApi, SendSmtpEmail, ApiClient } from "@getbrevo/brevo";
 
-const apiInstance = new Brevo.TransactionalEmailsApi()
-apiInstance.authentications["apiKey"].apiKey = process.env.BREVO_API_KEY
+const apiClient = ApiClient.instance
+apiClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY
+
+const apiInstance = new TransactionalEmailsApi()
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString()
@@ -11,7 +13,7 @@ const generateOTP = () => {
 
 const sendOTPEmail = async (email, otp) => {
     try {
-        const sendSmtpEmail = new Brevo.SendSmtpEmail()
+        const sendSmtpEmail = new SendSmtpEmail()
 
         sendSmtpEmail.subject = "Your OTP for Registration"
         sendSmtpEmail.to = [{ email }]
