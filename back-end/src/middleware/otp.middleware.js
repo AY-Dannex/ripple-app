@@ -8,13 +8,16 @@ const generateOTP = () => {
 
 const sendOTPEmail = async (email, otp) => {
     try{
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        })
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        family: 4,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    })
 
         await transporter.sendMail({
             from: `Ripple App <${process.env.EMAIL_USER}>`,
