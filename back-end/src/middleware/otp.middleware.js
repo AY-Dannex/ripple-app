@@ -1,26 +1,17 @@
 import { OTP } from "../models/otp.model.js";
 import { User } from "../models/user.model.js";
-import nodemailer from "nodemailer"
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
 const sendOTPEmail = async (email, otp) => {
-    try{
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
-        family: 4,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    })
-
-        await transporter.sendMail({
-            from: `Ripple App <${process.env.EMAIL_USER}>`,
+    try {
+        await resend.emails.send({
+            from: "Ripple App <onboarding@resend.dev>",
             to: email,
             subject: "Your OTP for Registration",
             html: `
@@ -41,10 +32,10 @@ const sendOTPEmail = async (email, otp) => {
                             please don't hesitate to contact us
                         </p>
                     </div>
-                </div>  `
+                </div>`
         })
         console.log("OTP email sent successfully to:", email)
-    } catch(error){
+    } catch (error) {
         console.error("Error sending OTP email:", error)
         throw error
     }
@@ -67,9 +58,7 @@ export const requestOTP = async (req, res) => {
         const otp = generateOTP()
 
         await OTP.deleteOne({ email })
-
         await OTP.create({ email, otp })
-
         await sendOTPEmail(email, otp)
 
         console.log("OTP process completed for:", email)
@@ -111,7 +100,6 @@ export const verifyOTP = async (req, res, next) => {
         }
 
         await OTP.deleteOne({ _id: otpRecord._id })
-
         next()
     } catch (error) {
         res.status(500).json({
