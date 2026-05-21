@@ -341,7 +341,7 @@ const logoutUsers = async (req, res) => {
     try {
         res.cookie("token", "", {
             httpOnly: true,
-            samesite: "none",
+            sameSite: "none",
             secure: process.env.NODE_ENV === "production",
             expires: new Date(0) //Expire immediately
         })
@@ -358,10 +358,6 @@ const logoutUsers = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        // if(req.user.role !== "admin") return res.status(403).json({
-        //     message: "Access denied... You are not an admin"
-        // })
-
         const users = await User.find().select("firstName lastName username email role profilePic _id")
         res.status(200).json({
             message: "All users rendered successfully",
@@ -407,10 +403,6 @@ const getUser = async (req, res) => {
 
 const assignRole = async (req, res) => {
     try {
-        if(req.user.role !== "admin") return res.status(403).json({
-            message: "You are not authorized to assign roles to users"
-        })
-
         const { email, newRole } = req.body
 
         if (!email || !newRole) return res.status(400).json({
@@ -511,7 +503,7 @@ const suspendUser = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {  
         if (req.user.role !== "admin"){
-            res.status(403).json({
+            return res.status(403).json({
                 message: "You are not authorized to delete users"
             })
         }

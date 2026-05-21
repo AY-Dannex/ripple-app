@@ -19,12 +19,13 @@ const protect = async (req, res, next) => {
 
         req.user = user
 
-        next()
-
+        
         if (user.suspendedUntil && user.suspendedUntil > new Date()) return res.status(403).json({
             message: `Your account has been suspended until ${user.suspendedUntil}`
         })
-
+        
+        next()
+        
     } catch (error) {
         res.status(401).json({
             message: "Invalid Token"
